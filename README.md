@@ -39,6 +39,9 @@ Restart or start a new session to activate the plugin.
 
 ## Plugins
 
+<details>
+<summary><strong>databricks-executor</strong> - Execute code on Databricks clusters</summary>
+
 ### databricks-executor
 
 Execute Python, SQL, Scala, or R code on Databricks clusters via the Execution Context API.
@@ -63,7 +66,7 @@ python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks-executor/scripts/databricks_exec
 
 See [configuration guide](databricks-executor-plugin/skills/databricks-executor/references/configuration.md) for detailed setup.
 
----
+</details>
 
 ## License
 

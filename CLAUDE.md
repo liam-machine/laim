@@ -75,11 +75,12 @@ Add a new entry to the `plugins` array:
 
 ### 2. Update README.md
 
-Add the new plugin to the "Plugins" section.
-
-Add a new subsection following this compact format:
+Add the new plugin to the "Plugins" section using a collapsible `<details>` block:
 
 ```markdown
+<details>
+<summary><strong><plugin-name></strong> - <short description></summary>
+
 ### <plugin-name>
 
 <One-line description of what the plugin does>
@@ -100,7 +101,7 @@ python3 ${CLAUDE_PLUGIN_ROOT}/skills/<skill-name>/scripts/<script>.py -c "exampl
 
 See [configuration guide](<plugin-name>/skills/<skill-name>/references/configuration.md) for detailed setup.
 
----
+</details>
 ```
 
 Keep descriptions concise - detailed documentation belongs in the plugin's references/ directory.
