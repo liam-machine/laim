@@ -48,30 +48,30 @@ ln -s /path/to/laim/<plugin-name> ~/.claude/plugins/<plugin-name>
 
 **When creating a new plugin in this repository, you MUST update README.md** to include the new plugin in the "Plugins" section.
 
-Add a new subsection following this format:
+Add a new subsection following this compact format:
 
 ```markdown
 ### <plugin-name>
 
-<Short description of what the plugin does>
+<One-line description of what the plugin does>
 
-**Features:**
-- Feature 1
-- Feature 2
+| Feature | Description |
+|---------|-------------|
+| Key1 | Value1 |
+| Key2 | Value2 |
 
-**Usage:**
+**Quick Start:**
 \`\`\`bash
-# Example command 1
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/<skill-name>/scripts/<script>.py -c "example"
+# Setup (if needed)
+export VAR="value"
 
-# Example command 2
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/<skill-name>/scripts/<script>.py --help
+# Example usage
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/<skill-name>/scripts/<script>.py -c "example"
 \`\`\`
 
-**Prerequisites:**
-- List any required setup (credentials, config files, etc.)
+See [configuration guide](<plugin-name>/skills/<skill-name>/references/configuration.md) for detailed setup.
 
 ---
 ```
 
-Also update the Installation section if the new plugin requires any special installation steps.
+Keep descriptions concise - detailed documentation belongs in the plugin's references/ directory.
