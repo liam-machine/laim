@@ -1,6 +1,6 @@
-# laim
+# l**AI**m
 
-A collection of Claude Code plugins for data engineering and cloud workflows.
+A collection of Claude Code plugins for data engineering, cloud workflows, and developer productivity.
 
 ## Installation
 
