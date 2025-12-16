@@ -1,6 +1,6 @@
-# l-**AI**-m (liam)
+# laim
 
-A collection of Claude Code plugins for data engineering, cloud workflows, and developer productivity.
+*Liam's **AI** plugins* — Claude Code extensions for data engineering, cloud workflows, and developer productivity.
 
 ## Installation
 
