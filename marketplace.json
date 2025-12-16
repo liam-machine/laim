@@ -1,0 +1,25 @@
+{
+  "name": "laim",
+  "owner": {
+    "name": "Liam Wynne",
+    "email": "liam@example.com"
+  },
+  "metadata": {
+    "description": "Claude Code plugins for data engineering and cloud workflows",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "databricks-executor",
+      "source": "./databricks-executor-plugin",
+      "description": "Execute Python, SQL, Scala, or R code on Databricks clusters via the Execution Context API",
+      "version": "1.0.0",
+      "author": {
+        "name": "Liam Wynne"
+      },
+      "license": "MIT",
+      "keywords": ["databricks", "spark", "pyspark", "sql", "data-engineering"],
+      "category": "data-engineering"
+    }
+  ]
+}

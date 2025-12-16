@@ -39,14 +39,43 @@ python3 databricks-executor-plugin/skills/databricks-executor/scripts/databricks
 
 ## Plugin Installation
 
-To install a plugin locally for testing:
+**From marketplace (users):**
+```shell
+/plugin marketplace add liam-machine/laim
+/plugin install <plugin-name>@liam-machine/laim
+```
+
+**Local development (contributors):**
 ```bash
 ln -s /path/to/laim/<plugin-name> ~/.claude/plugins/<plugin-name>
 ```
 
-## IMPORTANT: Updating README.md
+## IMPORTANT: When Creating New Plugins
 
-**When creating a new plugin in this repository, you MUST update README.md** to include the new plugin in the "Plugins" section.
+**When creating a new plugin in this repository, you MUST update both files:**
+
+### 1. Update marketplace.json
+
+Add a new entry to the `plugins` array:
+
+```json
+{
+  "name": "<plugin-name>",
+  "source": "./<plugin-name>",
+  "description": "<one-line description>",
+  "version": "1.0.0",
+  "author": {
+    "name": "Liam Wynne"
+  },
+  "license": "MIT",
+  "keywords": ["keyword1", "keyword2"],
+  "category": "<category>"
+}
+```
+
+### 2. Update README.md
+
+Add the new plugin to the "Plugins" section.
 
 Add a new subsection following this compact format:
 

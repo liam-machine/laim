@@ -4,30 +4,38 @@ A collection of Claude Code plugins for data engineering and cloud workflows.
 
 ## Installation
 
-### Option 1: Symlink (Recommended for Development)
+### Step 1: Add the Marketplace
 
-```bash
-ln -s /path/to/laim/<plugin-name> ~/.claude/plugins/<plugin-name>
+```shell
+/plugin marketplace add liam-machine/laim
 ```
 
-### Option 2: Copy to plugins directory
+### Step 2: Install a Plugin
 
-```bash
-cp -r /path/to/laim/<plugin-name> ~/.claude/plugins/<plugin-name>
+**Option A - Browse and install interactively:**
+```shell
+/plugin
+```
+Then select "Browse Plugins" and choose the plugin to install.
+
+**Option B - Install directly:**
+```shell
+/plugin install databricks-executor@liam-machine/laim
 ```
 
-### Option 3: Add to Claude Code settings
+### Step 3: Choose Installation Scope
 
-Edit `~/.claude/settings.json`:
-```json
-{
-  "plugins": [
-    "/path/to/laim/<plugin-name>"
-  ]
-}
-```
+When prompted, select a scope:
 
-After installation, restart Claude Code or start a new session.
+| Scope | Location | Use Case |
+|-------|----------|----------|
+| `user` | `~/.claude/settings.json` | Available in all projects |
+| `project` | `.claude/settings.json` | Shared with team via git |
+| `local` | `.claude/settings.local.json` | Personal, gitignored |
+
+### Step 4: Restart Claude Code
+
+Restart or start a new session to activate the plugin.
 
 ## Plugins
 
