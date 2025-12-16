@@ -5,7 +5,7 @@
     "email": "liam@example.com"
   },
   "metadata": {
-    "description": "Claude Code plugins for data engineering and cloud workflows",
+    "description": "Claude Code plugins for data engineering, cloud workflows, and developer productivity",
     "version": "1.0.0"
   },
   "plugins": [
@@ -20,6 +20,18 @@
       "license": "MIT",
       "keywords": ["databricks", "spark", "pyspark", "sql", "data-engineering"],
       "category": "data-engineering"
+    },
+    {
+      "name": "repo-creator",
+      "source": "./repo-creator-plugin",
+      "description": "Quickly create and publish repos with the /repo command. Supports personal and work repositories, GitHub publishing, and virtual environment setup (venv, conda, npm).",
+      "version": "1.0.0",
+      "author": {
+        "name": "Liam Wynne"
+      },
+      "license": "MIT",
+      "keywords": ["repo", "git", "github", "venv", "conda", "npm", "productivity", "automation"],
+      "category": "productivity"
     }
   ]
 }

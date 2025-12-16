@@ -37,7 +37,9 @@ When prompted, select a scope:
 
 Restart or start a new session to activate the plugin.
 
-## Plugins
+## Skills
+
+Skills are auto-triggered based on context - Claude automatically uses them when relevant.
 
 <details>
 <summary><strong>databricks-executor</strong> - Execute code on Databricks clusters</summary>
@@ -65,6 +67,37 @@ python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks-executor/scripts/databricks_exec
 ```
 
 See [configuration guide](databricks-executor-plugin/skills/databricks-executor/references/configuration.md) for detailed setup.
+
+</details>
+
+## Slash Commands
+
+Slash commands are invoked explicitly with `/<command-name>`.
+
+<details>
+<summary><strong>repo-creator</strong> - Create and publish repos with <code>/repo</code></summary>
+
+### repo-creator
+
+Quickly create and publish repositories with the `/repo` command. Supports personal and work directories, GitHub publishing, and virtual environment setup.
+
+| Feature | Description |
+|---------|-------------|
+| Usage | `/repo <repo-name> [work]` |
+| GitHub | Automatic publishing via `gh` CLI |
+| Environments | venv, conda, npm |
+| Config | `~/.claude/repo-creator-config.json` |
+
+**Quick Start:**
+```bash
+# Create a personal repo
+/repo my-new-project
+
+# Create a work repo
+/repo my-work-project work
+```
+
+On first run, you'll be prompted to configure your personal and work project directories.
 
 </details>
 
