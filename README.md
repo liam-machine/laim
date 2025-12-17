@@ -70,6 +70,39 @@ See [configuration guide](databricks-executor-plugin/skills/databricks-executor/
 
 </details>
 
+<details>
+<summary><strong>teams-message</strong> - Draft Microsoft Teams messages on macOS</summary>
+
+### teams-message
+
+Draft Microsoft Teams messages via AppleScript automation. Messages are drafted for you to review and send manually.
+
+| Feature | Description |
+|---------|-------------|
+| Platform | macOS only |
+| App | Microsoft Teams desktop |
+| Mode | Draft only (manual send) |
+| Auth | Uses your existing Teams session |
+
+**Quick Start:**
+
+1. Ensure Microsoft Teams is installed and you're signed in
+2. Grant Accessibility permissions to Terminal (System Settings > Privacy & Security > Accessibility)
+3. Ask Claude to send a message:
+
+```
+"Send a Teams message to colleague@company.com saying Hello!"
+```
+
+Or run directly:
+```bash
+bash ${CLAUDE_PLUGIN_ROOT}/skills/teams-message/scripts/teams-message.sh "recipient@email.com" "Your message"
+```
+
+See [setup guide](teams-message-plugin/skills/teams-message/references/setup.md) for detailed configuration.
+
+</details>
+
 ## Slash Commands
 
 Slash commands are invoked explicitly with `/<command-name>`.

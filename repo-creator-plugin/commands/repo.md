@@ -1,6 +1,6 @@
 ---
 description: Create a new repository, publish to GitHub, and optionally set up a virtual environment
-argument-hint: <repo-name> [work]
+argument-hint: <repo-name> [org]
 allowed-tools: Bash(*), Read, Write, AskUserQuestion
 ---
 
@@ -10,7 +10,7 @@ You are helping the user create a new repository. Follow these steps carefully:
 
 ## Arguments
 - `$1` = Repository name (required)
-- `$2` = "work" flag (optional) - if present, create in work directory
+- `$2` = "org" flag (optional) - if present, create repository under a GitHub organization
 
 **Repo name provided:** $ARGUMENTS
 
@@ -24,26 +24,41 @@ cat ~/.claude/repo-creator-config.json 2>/dev/null
 
 **If the config file does NOT exist or is empty:**
 
-Use the AskUserQuestion tool to ask the user TWO questions:
-1. "What is the absolute path to your PERSONAL projects directory?" (e.g., /Users/username/GIT/personal)
-2. "What is the absolute path to your WORK projects directory?" (e.g., /Users/username/GIT/work)
+Use the AskUserQuestion tool to ask the user:
+- "What is the absolute path to your personal projects directory?" (e.g., /Users/username/GIT)
 
 Then create the config file:
 ```bash
 mkdir -p ~/.claude
 cat > ~/.claude/repo-creator-config.json << 'EOF'
 {
-  "personalRepoPath": "<USER_PROVIDED_PERSONAL_PATH>",
-  "workRepoPath": "<USER_PROVIDED_WORK_PATH>"
+  "personalReposPath": "<USER_PROVIDED_PATH>",
+  "configuredPaths": ["<USER_PROVIDED_PATH>"]
 }
 EOF
 ```
 
+**If the config file EXISTS but uses the old format (has `workReposPath` instead of `configuredPaths`):**
+
+Migrate to the new format by reading the existing values and creating:
+```json
+{
+  "personalReposPath": "<existing personalReposPath>",
+  "configuredPaths": ["<existing personalReposPath>", "<existing workReposPath>"]
+}
+```
+(Remove duplicates if both paths are the same)
+
 ## Step 2: Determine Repository Location
 
-Read the config file and determine where to create the repo:
-- If `$2` is "work" or "Work" or "WORK", use `workRepoPath`
-- Otherwise (default), use `personalRepoPath`
+Read the config file:
+
+**If `$2` is "org" (case-insensitive):**
+- The repository path will be determined later in Step 5 when the user selects their organization
+- For now, note that this is an organization repository
+
+**Otherwise (default - personal repository):**
+- Use `personalReposPath` from the config file as the repository location
 
 ## Step 3: Check GitHub CLI
 
@@ -66,7 +81,42 @@ gh auth status
 
 If not authenticated, run `gh auth login` and guide the user through authentication.
 
+## Step 3.5: Discover GitHub Organizations (for org repos only)
+
+**If `$2` is "org" (case-insensitive):**
+
+Fetch the user's GitHub organizations:
+```bash
+gh org list 2>/dev/null
+```
+
+This returns a list of organizations the user belongs to.
+
+**If the user has NO organizations:**
+- Inform them they don't belong to any GitHub organizations
+- Ask if they want to create a personal repository instead
+- If yes, proceed as a personal repo
+
+**If the user HAS organizations:**
+- Store the list for use in Step 5 when publishing
+
 ## Step 4: Create the Repository
+
+**For ORG repos (when `$2` is "org"):**
+
+First, ask the user where to save the repository using AskUserQuestion with the `configuredPaths` from the config file as options.
+
+Example question: "Where would you like to save this repository?"
+- Show each path from `configuredPaths` as an option
+- The user can also select "Other" to provide a custom path
+
+If the user provides a new path that isn't in `configuredPaths`, add it to the config file for future use.
+
+**For PERSONAL repos (default):**
+
+Use `personalReposPath` from the config file.
+
+---
 
 Create the repository directory and initialize git:
 
@@ -104,11 +154,15 @@ gh auth status 2>&1 | grep "Logged in to github.com account"
 gh repo create <GITHUB_USERNAME>/<REPO_NAME> --<VISIBILITY> --source=. --remote=origin --push
 ```
 
-**For WORK repos:**
-Use AskUserQuestion to ask: "What GitHub organization should this work repo be published to?"
-Then create with that org:
+**For ORG repos (when `$2` is "org"):**
+Use AskUserQuestion to present a dropdown of the organizations discovered in Step 3.5.
+
+Example question: "Which organization should this repository be published to?"
+- List each organization from `gh org list` as an option
+
+Then create with the selected org:
 ```bash
-gh repo create <ORG_NAME>/<REPO_NAME> --<VISIBILITY> --source=. --remote=origin --push
+gh repo create <SELECTED_ORG>/<REPO_NAME> --<VISIBILITY> --source=. --remote=origin --push
 ```
 
 ## Step 6: Virtual Environment Setup
