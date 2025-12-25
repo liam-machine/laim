@@ -44,6 +44,18 @@
       "license": "MIT",
       "keywords": ["statusline", "status", "usage", "rate-limits", "git", "productivity", "ui"],
       "category": "productivity"
+    },
+    {
+      "name": "manim-web",
+      "source": "./manim-web-plugin",
+      "description": "Create animated splash screens and web animations using Manim Community (3Blue1Brown's animation engine)",
+      "version": "1.0.0",
+      "author": {
+        "name": "Liam Wynne"
+      },
+      "license": "MIT",
+      "keywords": ["manim", "animation", "splash-screen", "web", "video", "gif", "motion-graphics", "3blue1brown"],
+      "category": "creative"
     }
   ]
 }

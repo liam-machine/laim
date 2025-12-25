@@ -147,6 +147,57 @@ cp ${CLAUDE_PLUGIN_ROOT}/scripts/statusline.py ~/.claude/scripts/
 
 </details>
 
+<details>
+<summary><strong>manim-web</strong> - Animated splash screens and web animations with Manim</summary>
+
+### manim-web
+
+Create professional splash screens, loading animations, and web-ready motion graphics using Manim Community — the animation engine behind 3Blue1Brown's videos.
+
+| Feature | Description |
+|---------|-------------|
+| Formats | GIF, WebM (transparent), MP4, MOV |
+| Quality | 480p to 4K presets |
+| Templates | Logo reveals, loaders, UI components |
+| Easing | 20+ rate functions (bounce, elastic, back, etc.) |
+
+**Quick Start:**
+```bash
+# Install Manim
+pip install manim
+
+# Create a simple splash screen
+cat > splash.py << 'EOF'
+from manim import *
+
+class LogoReveal(Scene):
+    def construct(self):
+        logo = Text("MyApp", font_size=96, gradient=(BLUE, PURPLE))
+        self.play(FadeIn(logo, scale=0.8), rate_func=ease_out_back, run_time=1)
+        self.wait(0.5)
+EOF
+
+# Render with transparency for web
+manim -t --format webm -qh splash.py LogoReveal
+```
+
+**Using the render helper:**
+```bash
+# Use presets for common use cases
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/manim-web/scripts/render_web.py splash.py LogoReveal --preset splash
+
+# List available presets
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/manim-web/scripts/render_web.py --list-presets
+```
+
+**Templates included:**
+- `splash_screens.py` — Logo reveals, particle entries, morphing shapes
+- `web_components.py` — Buttons, cards, loaders, notifications
+
+See [animation reference](manim-web-plugin/skills/manim-web/references/animations.md) and [easing reference](manim-web-plugin/skills/manim-web/references/easing.md) for full documentation.
+
+</details>
+
 ## License
 
 MIT

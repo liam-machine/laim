@@ -1,0 +1,10 @@
+{
+  "name": "manim-web",
+  "version": "1.0.0",
+  "description": "Create animated splash screens and web animations using Manim Community",
+  "author": {
+    "name": "Liam Wynne"
+  },
+  "license": "MIT",
+  "keywords": ["manim", "animation", "splash-screen", "web", "video", "gif", "3blue1brown"]
+}
