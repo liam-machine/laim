@@ -103,20 +103,64 @@ See [setup guide](teams-message-plugin/skills/teams-message/references/setup.md)
 
 </details>
 
+<details>
+<summary><strong>statusline</strong> - Rich status line with usage tracking and git info</summary>
+
+### statusline
+
+Rich Claude Code status line displaying context usage, API rate limits, git info, and visual progress bars.
+
+| Feature | Description |
+|---------|-------------|
+| Context | Token count with progress bar (e.g., `10%-20K/200K`) |
+| Session | 5-hour API rate limit with time remaining |
+| Weekly | 7-day rate limit with time remaining |
+| Git | Repo, branch, status (`*` unstaged, `+` staged, `↑↓` ahead/behind) |
+| Cost | Session cost and duration |
+
+**Example Output:**
+```
+Opus 4.5 | 💭 █░░░░░░░ 10%-20K/200K | ⏱ █░░░░░░░ 6%-4h42m | 📅 █░░░░░░░ 2%-2d12h | $1.25 | 5m | laim:main[✓] | v2.0.31
+```
+
+**Quick Start:**
+
+After installing the plugin, ask Claude to set up the statusline:
+```
+"Set up the rich statusline for me"
+```
+
+Or manually:
+```bash
+# Copy the script
+mkdir -p ~/.claude/scripts
+cp ${CLAUDE_PLUGIN_ROOT}/scripts/statusline.py ~/.claude/scripts/
+
+# Add to ~/.claude/settings.json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "python3 ~/.claude/scripts/statusline.py"
+  }
+}
+```
+
+</details>
+
 ## Slash Commands
 
 Slash commands are invoked explicitly with `/<command-name>`.
 
 <details>
-<summary><strong>repo-creator</strong> - Create and publish repos with <code>/repo</code></summary>
+<summary><strong>repo</strong> - Create and publish repos with <code>/repo</code></summary>
 
-### repo-creator
+### repo
 
-Quickly create and publish repositories with the `/repo` command. Supports personal and work directories, GitHub publishing, and virtual environment setup.
+Quickly create and publish repositories with the `/repo` command. Supports personal and org repositories, GitHub publishing, and virtual environment setup.
 
 | Feature | Description |
 |---------|-------------|
-| Usage | `/repo <repo-name> [work]` |
+| Usage | `/repo <repo-name> [org]` |
 | GitHub | Automatic publishing via `gh` CLI |
 | Environments | venv, conda, npm |
 | Config | `~/.claude/repo-creator-config.json` |
@@ -126,11 +170,11 @@ Quickly create and publish repositories with the `/repo` command. Supports perso
 # Create a personal repo
 /repo my-new-project
 
-# Create a work repo
-/repo my-work-project work
+# Create an org repo
+/repo my-project org
 ```
 
-On first run, you'll be prompted to configure your personal and work project directories.
+On first run, you'll be prompted to configure your personal projects directory.
 
 </details>
 

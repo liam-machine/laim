@@ -38,16 +38,15 @@ cat > ~/.claude/repo-creator-config.json << 'EOF'
 EOF
 ```
 
-**If the config file EXISTS but uses the old format (has `workReposPath` instead of `configuredPaths`):**
+**If the config file EXISTS but is missing `configuredPaths`:**
 
-Migrate to the new format by reading the existing values and creating:
+Add the `configuredPaths` array using the existing `personalReposPath`:
 ```json
 {
   "personalReposPath": "<existing personalReposPath>",
-  "configuredPaths": ["<existing personalReposPath>", "<existing workReposPath>"]
+  "configuredPaths": ["<existing personalReposPath>"]
 }
 ```
-(Remove duplicates if both paths are the same)
 
 ## Step 2: Determine Repository Location
 

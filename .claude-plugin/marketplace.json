@@ -22,9 +22,9 @@
       "category": "data-engineering"
     },
     {
-      "name": "repo-creator",
-      "source": "./repo-creator-plugin",
-      "description": "Quickly create and publish repos with the /repo command. Supports personal and work repositories, GitHub publishing, and virtual environment setup (venv, conda, npm).",
+      "name": "repo",
+      "source": "./repo-plugin",
+      "description": "Quickly create and publish repos with the /repo command. Supports personal and org repositories, GitHub publishing, and virtual environment setup (venv, conda, npm).",
       "version": "1.0.0",
       "author": {
         "name": "Liam Wynne"
@@ -43,6 +43,18 @@
       },
       "license": "MIT",
       "keywords": ["teams", "microsoft", "messaging", "automation", "applescript", "macos", "productivity"],
+      "category": "productivity"
+    },
+    {
+      "name": "statusline",
+      "source": "./statusline-plugin",
+      "description": "Rich Claude Code status line with context usage, API rate limits, git info, and visual progress bars",
+      "version": "1.0.0",
+      "author": {
+        "name": "Liam Wynne"
+      },
+      "license": "MIT",
+      "keywords": ["statusline", "status", "usage", "rate-limits", "git", "productivity", "ui"],
       "category": "productivity"
     }
   ]
