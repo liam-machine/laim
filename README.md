@@ -147,37 +147,6 @@ cp ${CLAUDE_PLUGIN_ROOT}/scripts/statusline.py ~/.claude/scripts/
 
 </details>
 
-## Slash Commands
-
-Slash commands are invoked explicitly with `/<command-name>`.
-
-<details>
-<summary><strong>repo</strong> - Create and publish repos with <code>/repo</code></summary>
-
-### repo
-
-Quickly create and publish repositories with the `/repo` command. Supports personal and org repositories, GitHub publishing, and virtual environment setup.
-
-| Feature | Description |
-|---------|-------------|
-| Usage | `/repo <repo-name> [org]` |
-| GitHub | Automatic publishing via `gh` CLI |
-| Environments | venv, conda, npm |
-| Config | `~/.claude/repo-creator-config.json` |
-
-**Quick Start:**
-```bash
-# Create a personal repo
-/repo my-new-project
-
-# Create an org repo
-/repo my-project org
-```
-
-On first run, you'll be prompted to configure your personal projects directory.
-
-</details>
-
 ## License
 
 MIT
