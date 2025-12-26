@@ -1,0 +1,73 @@
+# Contacts Directory
+# This file is loaded when the messaging skill needs to resolve a contact.
+# Add your contacts here with their platform-specific identifiers.
+
+contacts:
+  - name: James Dowzard
+    nicknames:
+      - James
+      - JD
+      - Dowzard
+    context: personal_and_work
+    relationship: "Personal friend and work colleague at JHG"
+    work_keywords:
+      # If message contains any of these, use work platform (Teams)
+      - John Holland
+      - JHG
+      - Databricks
+      - pipeline
+      - sprint
+      - standup
+      - jira
+      - confluence
+      - deployment
+      - production
+      - staging
+    platforms:
+      teams:
+        email: jdowzard@jhg.com.au
+      whatsapp:
+        phone: "+61418323408"
+      imessage:
+        phone: "+61418323408"
+      messenger:
+        username: "james.dowzard"  # Facebook username for m.me/ link
+    default_platform:
+      work: teams
+      personal: whatsapp
+
+# ============================================================================
+# Template for adding new contacts:
+# ============================================================================
+#
+#  - name: Full Name
+#    nicknames:
+#      - Nickname1
+#      - Nickname2
+#    context: personal | work | personal_and_work
+#    relationship: "Brief description of relationship"
+#    work_keywords:
+#      - keyword1
+#      - keyword2
+#    platforms:
+#      teams:
+#        email: work@company.com
+#      whatsapp:
+#        phone: "+1234567890"
+#      imessage:
+#        phone: "+1234567890"
+#        email: personal@icloud.com  # iMessage can use email too
+#      messenger:
+#        username: "fb.username"
+#    default_platform:
+#      work: teams
+#      personal: whatsapp
+#
+# ============================================================================
+# Notes:
+# - nicknames: Alternative names to match when user says "message X"
+# - context: Helps determine if contact is work-only, personal-only, or both
+# - work_keywords: If message contains these words, use work platform
+# - platforms: Only include platforms the contact uses
+# - default_platform: Fallback when platform can't be inferred
+# ============================================================================

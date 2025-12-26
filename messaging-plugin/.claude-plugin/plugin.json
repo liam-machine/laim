@@ -1,0 +1,10 @@
+{
+  "name": "messaging-plugin",
+  "version": "1.0.0",
+  "description": "Multi-platform messaging for Teams, WhatsApp, iMessage, and Messenger on macOS",
+  "author": {
+    "name": "Liam Wynne"
+  },
+  "license": "MIT",
+  "keywords": ["messaging", "teams", "whatsapp", "imessage", "messenger", "automation", "applescript", "macos"]
+}

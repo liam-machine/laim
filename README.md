@@ -71,9 +71,51 @@ See [configuration guide](databricks-executor-plugin/skills/databricks-executor/
 </details>
 
 <details>
-<summary><strong>teams-message</strong> - Draft Microsoft Teams messages on macOS</summary>
+<summary><strong>messaging</strong> - Multi-platform messaging (Teams, WhatsApp, iMessage, Messenger)</summary>
+
+### messaging
+
+Send messages across multiple platforms from Claude Code. Supports contact lookup by name with intelligent platform selection based on message content.
+
+| Feature | Description |
+|---------|-------------|
+| Platforms | Teams, WhatsApp, iMessage, Messenger |
+| Mode | Draft by default (manual send) |
+| Contacts | Name-based lookup with platform routing |
+| Inference | Work keywords trigger work platform (Teams) |
+| Platform | macOS only |
+
+**Quick Start:**
+
+1. Ensure platform apps are installed (Teams, WhatsApp, Messages, Messenger)
+2. Grant Accessibility permissions to Terminal (System Settings > Privacy & Security > Accessibility)
+3. Add contacts to `${CLAUDE_PLUGIN_ROOT}/skills/messaging/references/contacts.yaml`
+4. Ask Claude to send a message:
+
+```
+"Message James about the Databricks pipeline"     # → Teams (work keyword detected)
+"Message James about drinks on Friday"            # → Asks which platform
+"WhatsApp James: Running 10 minutes late"         # → WhatsApp (explicit)
+```
+
+Or run directly:
+```bash
+bash ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/message.sh \
+  --platform teams \
+  --recipient "jdowzard@jhg.com.au" \
+  --message "Your message"
+```
+
+See [setup guide](messaging-plugin/skills/messaging/references/setup.md) for platform-specific configuration.
+
+</details>
+
+<details>
+<summary><strong>teams-message</strong> - Draft Microsoft Teams messages on macOS (deprecated)</summary>
 
 ### teams-message
+
+> **Note:** This plugin has been superseded by the `messaging` plugin which supports multiple platforms.
 
 Draft Microsoft Teams messages via AppleScript automation. Messages are drafted for you to review and send manually.
 

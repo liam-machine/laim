@@ -56,6 +56,18 @@
       "license": "MIT",
       "keywords": ["manim", "animation", "splash-screen", "web", "video", "gif", "motion-graphics", "3blue1brown"],
       "category": "creative"
+    },
+    {
+      "name": "messaging",
+      "source": "./messaging-plugin",
+      "description": "Multi-platform messaging for Teams, WhatsApp, iMessage, and Messenger on macOS",
+      "version": "1.0.0",
+      "author": {
+        "name": "Liam Wynne"
+      },
+      "license": "MIT",
+      "keywords": ["messaging", "teams", "whatsapp", "imessage", "messenger", "automation", "applescript", "macos", "productivity"],
+      "category": "productivity"
     }
   ]
 }
