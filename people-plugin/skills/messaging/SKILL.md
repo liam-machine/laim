@@ -272,12 +272,57 @@ bash ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/message.sh \
 
 ## Platform Support
 
-| Platform | Method | Identifier |
-|----------|--------|------------|
-| Teams | AppleScript + deep link | Email address |
-| WhatsApp | Deep link (wa.me) | Phone number (+61...) |
-| iMessage | AppleScript (Messages.app) | Phone or email |
-| Messenger | Deep link (m.me) | Facebook username |
+| Platform | Draft Mode | Send Mode (Yolo) | Identifier |
+|----------|------------|------------------|------------|
+| Teams | AppleScript + deep link | AppleScript | Email address |
+| WhatsApp | Deep link (wa.me) | **Browser automation** | Phone number (+61...) |
+| iMessage | AppleScript | AppleScript | Phone or email |
+| Messenger | Deep link (m.me) | Browser automation | Facebook username |
+
+### WhatsApp Send Mode (Browser Automation)
+
+**IMPORTANT:** WhatsApp deep links cannot auto-send messages (security feature). For yolo/send mode, use browser automation via claude-in-chrome MCP tools.
+
+#### Quick Reference
+
+```javascript
+// 1. Navigate directly to chat
+navigate({ url: "https://web.whatsapp.com/send?phone=61418323408", tabId })
+wait({ duration: 3, tabId })
+
+// 2. Insert message using execCommand (regular typing doesn't work)
+javascript_tool({
+  action: "javascript_exec",
+  text: `
+    const msgBox = document.querySelector('footer [contenteditable="true"]');
+    msgBox?.focus();
+    document.execCommand('insertText', false, 'Your message here');
+  `,
+  tabId
+})
+
+// 3. Wait for send button to appear
+wait({ duration: 1, tabId })
+
+// 4. Click send button
+javascript_tool({
+  action: "javascript_exec",
+  text: `
+    const send = document.querySelector('[data-icon="send"]');
+    send?.closest('button')?.click() || send?.parentElement?.click();
+  `,
+  tabId
+})
+```
+
+#### Key Insights
+
+1. **Phone format**: Remove `+` from number (e.g., `61418323408` not `+61418323408`)
+2. **Text input**: Use `document.execCommand('insertText', ...)` - regular typing fails on contenteditable
+3. **Send button**: Find by `[data-icon="send"]` selector, NOT coordinate clicks
+4. **Link previews**: Wait for them to load before sending - they're included automatically
+
+See @references/whatsapp-browser.md for detailed troubleshooting.
 
 ## Troubleshooting
 

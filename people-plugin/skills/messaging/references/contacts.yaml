@@ -61,7 +61,7 @@ contacts:
       - Wynne
     context: personal
     relationship: "Brother and WoodsWynne collaborator"
-    github: aidanswynne
+    # github: unknown - aidanswynne doesn't exist
     platforms:
       whatsapp:
         phone: "+61466271358"
@@ -79,6 +79,11 @@ contacts:
     context: personal
     relationship: "Personal friend and 3CC collaborator"
     github: cdaghl
+    platforms:
+      whatsapp:
+        phone: "+61410770573"
+      imessage:
+        phone: "+61410770573"
     default_platform:
       personal: imessage
 
