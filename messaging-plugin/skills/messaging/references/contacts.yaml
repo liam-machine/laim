@@ -54,6 +54,22 @@ contacts:
     default_platform:
       personal: imessage
 
+  - name: Aidan Wynne
+    nicknames:
+      - Aidan
+      - Wynne
+    context: personal
+    relationship: "Brother"
+    platforms:
+      whatsapp:
+        phone: "+61466271358"
+      imessage:
+        phone: "+61466271358"
+      messenger:
+        username: "aidanswynne"
+    default_platform:
+      personal: imessage
+
 # ============================================================================
 # Template for adding new contacts:
 # ============================================================================
