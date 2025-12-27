@@ -308,7 +308,7 @@ wait({ duration: 1, tabId })
 javascript_tool({
   action: "javascript_exec",
   text: `
-    const send = document.querySelector('[data-icon="send"]');
+    const send = document.querySelector('[data-icon*="send"]');
     send?.closest('button')?.click() || send?.parentElement?.click();
   `,
   tabId
@@ -319,7 +319,7 @@ javascript_tool({
 
 1. **Phone format**: Remove `+` from number (e.g., `61418323408` not `+61418323408`)
 2. **Text input**: Use `document.execCommand('insertText', ...)` - regular typing fails on contenteditable
-3. **Send button**: Find by `[data-icon="send"]` selector, NOT coordinate clicks
+3. **Send button**: Find by `[data-icon*="send"]` selector (contains "send"), NOT coordinate clicks
 4. **Link previews**: Wait for them to load before sending - they're included automatically
 
 See @references/whatsapp-browser.md for detailed troubleshooting.

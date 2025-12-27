@@ -69,14 +69,15 @@ javascript_tool({
 
 ### Step 3: Click Send Button
 
-The send button appears after text is entered. Find it by `data-icon="send"`:
+The send button appears after text is entered. Find it by `data-icon` containing "send":
 
 ```javascript
 javascript_tool({
   action: "javascript_exec",
   text: `
     // Wait a moment for send button to appear
-    const sendIcon = document.querySelector('[data-icon="send"]');
+    // WhatsApp uses different icon names: "send" or "wds-ic-send-filled"
+    const sendIcon = document.querySelector('[data-icon*="send"]');
     if (sendIcon) {
       // Click the parent button element
       const sendButton = sendIcon.closest('button') || sendIcon.parentElement;
@@ -155,7 +156,7 @@ wait({ duration: 1, tabId })
 javascript_tool({
   action: "javascript_exec",
   text: `
-    const sendIcon = document.querySelector('[data-icon="send"]');
+    const sendIcon = document.querySelector('[data-icon*="send"]');
     if (sendIcon) {
       sendIcon.closest('button')?.click() || sendIcon.parentElement.click();
       "sent";

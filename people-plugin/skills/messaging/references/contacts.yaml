@@ -102,6 +102,8 @@ contacts:
     platforms:
       teams:
         email: javilamolina@jhg.com.au
+      whatsapp:
+        phone: "+61407544142"
     default_platform:
       work: teams
       personal: whatsapp
