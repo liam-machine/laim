@@ -45,15 +45,66 @@ When sending a message, Claude determines the platform using this priority:
 3. **Draft Message** - Open the platform and draft the message
 4. **You Review & Send** - Message is ready for you to review and send
 
-## Contact Lookup
+## Contact Resolution
 
-When a user mentions a known contact by name, load the contacts file:
+When a user mentions a contact by name, use the smart lookup flow to avoid loading the full contacts file:
+
+### Step 1: Lookup Known Contacts
 
 ```bash
-cat ${CLAUDE_PLUGIN_ROOT}/skills/messaging/references/contacts.yaml
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/lookup-contact.py --name "<contact name>"
 ```
 
-Match by name or nickname, then:
+Returns JSON with contact details if found, or `{"found": false}` if not.
+
+### Step 2: Auto-Discover Unknown Contacts
+
+If lookup returns `found: false`, search macOS Contacts:
+
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/discover-contact.py --name "<contact name>" --include-messenger
+```
+
+This searches the user's macOS Contacts app for phone/email. If Messenger username is needed, you'll need to search the user's Facebook friends list using browser automation.
+
+### Step 3: Auto-Add New Contacts
+
+After successfully discovering a contact, automatically add them to contacts.yaml:
+
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/add-contact.py \
+  --name "<Full Name>" \
+  --phone "<+61...>" \
+  --email "<email>" \
+  --messenger "<username>" \
+  --context personal \
+  --relationship "<description>"
+```
+
+### Complete Flow Example
+
+```
+User: "Message Sarah about dinner"
+
+1. Lookup: lookup-contact.py --name "Sarah"
+   → {"found": false}
+
+2. Discover: discover-contact.py --name "Sarah" --include-messenger
+   → {"found": true, "phone": "+61412345678", "email": "sarah@email.com"}
+
+3. For Messenger username (if needed):
+   → Use browser to search Facebook friends for "Sarah"
+   → Extract username from profile URL
+
+4. Auto-add: add-contact.py --name "Sarah Smith" --phone "+61412345678" --messenger "sarah.smith"
+   → Contact saved to contacts.yaml
+
+5. Send message using discovered details
+```
+
+### Platform Selection
+
+Once contact is resolved:
 - Check if message contains any of the contact's `work_keywords`
 - If yes, use work platform (Teams)
 - If no work keywords and platform not explicit, ask user which platform

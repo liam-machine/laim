@@ -36,6 +36,24 @@ contacts:
       work: teams
       personal: whatsapp
 
+  - name: Charlotte Wynne
+    nicknames:
+      - Charlotte
+      - Char
+      - Wife
+    context: personal
+    relationship: "Wife"
+    platforms:
+      whatsapp:
+        phone: "+61422080977"
+      imessage:
+        phone: "+61422080977"
+        email: "charlottewynne23@gmail.com"
+      messenger:
+        username: "charlottewooods"
+    default_platform:
+      personal: imessage
+
 # ============================================================================
 # Template for adding new contacts:
 # ============================================================================
