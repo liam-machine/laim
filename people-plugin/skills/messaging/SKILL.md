@@ -102,6 +102,77 @@ User: "Message Sarah about dinner"
 5. Send message using discovered details
 ```
 
+### Adding JHG Work Colleagues
+
+When adding a new JHG (John Holland Group) work colleague, **always look up their Teams email** using browser automation:
+
+#### Teams Email Lookup Workflow
+
+1. **Open Teams Web** using claude-in-chrome:
+   ```
+   tabs_context_mcp(createIfEmpty: true)
+   tabs_create_mcp()
+   navigate(url: "https://teams.microsoft.com", tabId)
+   wait(duration: 5)  # Wait for Teams to load
+   ```
+
+2. **Search for the person**:
+   ```
+   click on search bar
+   type "<person's name>"
+   wait(duration: 2)
+   ```
+
+3. **Click on their profile** in search results (look for "-JHG" suffix)
+
+4. **Extract email** from the profile card:
+   - Look for "Email" field (format: `firstname.lastname@jhg.com.au` or `username@jhg.com.au`)
+   - The "Chat" field shows the Teams identifier
+
+5. **Add to contacts** with work context:
+   ```yaml
+   - name: <Full Name>
+     nicknames:
+       - <FirstName>
+       - <LastName>
+     context: work  # or personal_and_work if also a friend
+     relationship: "Work colleague at JHG"
+     work_keywords:
+       - John Holland
+       - JHG
+       - Databricks
+       - pipeline
+     platforms:
+       teams:
+         email: <username>@jhg.com.au
+     default_platform:
+       work: teams
+   ```
+
+#### Example: Adding a New JHG Colleague
+
+```
+User: "Add Rebecca Bhatia from JHG to my contacts"
+
+1. Search Teams for "Rebecca Bhatia"
+2. Click on "Rebecca Bhatia-JHG" profile
+3. Extract email: rbhatia@jhg.com.au
+4. Edit contacts.yaml to add:
+   - name: Rebecca Bhatia
+     nicknames: [Rebecca, Bhatia]
+     context: work
+     relationship: "Work colleague at JHG"
+     github: <if known>
+     work_keywords: [John Holland, JHG, ...]
+     platforms:
+       teams:
+         email: rbhatia@jhg.com.au
+     default_platform:
+       work: teams
+```
+
+**IMPORTANT:** Always verify the email from Teams rather than guessing the format, as JHG email formats can vary (e.g., `jdowzard@jhg.com.au` vs `javilamolina@jhg.com.au`).
+
 ### Platform Selection
 
 Once contact is resolved:

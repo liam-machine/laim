@@ -9,7 +9,7 @@ contacts:
       - JD
       - Dowzard
     context: personal_and_work
-    relationship: "Personal friend and work colleague at JHG"
+    relationship: "Personal friend, startup collaborator, and work colleague at JHG"
     github: jamesdowzard
     work_keywords:
       # If message contains any of these, use work platform (Teams)
@@ -70,6 +70,35 @@ contacts:
         username: "aidanswynne"
     default_platform:
       personal: imessage
+
+  - name: Christine Daghl
+    nicknames:
+      - Christine
+      - Daghl
+    context: personal
+    relationship: "Personal friend and startup collaborator"
+    github: cdaghl
+    default_platform:
+      personal: imessage
+
+  - name: Juan Molina
+    nicknames:
+      - Juan
+      - Molina
+    context: personal_and_work
+    relationship: "Personal friend, startup collaborator, and work colleague at JHG"
+    github: jsam-jhg
+    work_keywords:
+      - John Holland
+      - JHG
+      - Databricks
+      - pipeline
+    platforms:
+      teams:
+        email: javilamolina@jhg.com.au
+    default_platform:
+      work: teams
+      personal: whatsapp
 
 # ============================================================================
 # Template for adding new contacts:
