@@ -37,9 +37,42 @@ When prompted, select a scope:
 
 Restart or start a new session to activate the plugin.
 
+## Plugin Structure
+
+```
+laim/
+├── databricks-executor-plugin/
+│   └── skills/
+│       └── databricks-executor        # Execute code on Databricks clusters
+│
+├── people-plugin/
+│   └── skills/
+│       ├── messaging                  # Multi-platform messaging
+│       └── github-collaborator        # Add repo collaborators by name
+│
+├── manim-web-plugin/
+│   └── skills/
+│       └── manim-web                  # Animated splash screens & web animations
+│
+├── repo-creator-plugin/
+│   └── skills/
+│       └── repo                       # Create repos, publish to GitHub
+│
+└── statusline-plugin/
+    └── hooks/                         # Rich status line (no skills, hooks only)
+```
+
+| Plugin | Skills | Category |
+|--------|--------|----------|
+| **databricks-executor** | `databricks-executor` | Data Engineering |
+| **people** | `messaging`, `github-collaborator` | Productivity |
+| **manim-web** | `manim-web` | Creative |
+| **repo-creator** | `repo` | Productivity |
+| **statusline** | *(hooks only)* | Productivity |
+
 ## Skills
 
-Skills are auto-triggered based on context - Claude automatically uses them when relevant.
+Skills are auto-triggered based on context — Claude automatically uses them when relevant.
 
 <details>
 <summary><strong>databricks-executor</strong> - Execute code on Databricks clusters</summary>
@@ -71,77 +104,40 @@ See [configuration guide](databricks-executor-plugin/skills/databricks-executor/
 </details>
 
 <details>
-<summary><strong>messaging</strong> - Multi-platform messaging (Teams, WhatsApp, iMessage, Messenger)</summary>
+<summary><strong>people</strong> - Person-directed actions (messaging + GitHub collaboration)</summary>
 
-### messaging
+### people
 
-Send messages across multiple platforms from Claude Code. Supports contact lookup by name with intelligent platform selection based on message content.
+Person-directed actions: send messages across platforms and manage GitHub collaborators. Resolves contact names to platform-specific identifiers.
 
 | Feature | Description |
 |---------|-------------|
 | Platforms | Teams, WhatsApp, iMessage, Messenger |
+| GitHub | Add/remove collaborators by contact name |
 | Mode | Draft by default (manual send) |
 | Contacts | Name-based lookup with platform routing |
 | Inference | Work keywords trigger work platform (Teams) |
 | Platform | macOS only |
+
+**Skills included:**
+- `messaging` — Multi-platform messaging
+- `github-collaborator` — Add repo collaborators by name
 
 **Quick Start:**
 
 1. Ensure platform apps are installed (Teams, WhatsApp, Messages, Messenger)
 2. Grant Accessibility permissions to Terminal (System Settings > Privacy & Security > Accessibility)
 3. Add contacts to `${CLAUDE_PLUGIN_ROOT}/skills/messaging/references/contacts.yaml`
-4. Ask Claude to send a message:
+4. Ask Claude:
 
 ```
 "Message James about the Databricks pipeline"     # → Teams (work keyword detected)
 "Message James about drinks on Friday"            # → Asks which platform
 "WhatsApp James: Running 10 minutes late"         # → WhatsApp (explicit)
+"Add James as a collaborator to my active repo"   # → GitHub (uses github handle)
 ```
 
-Or run directly:
-```bash
-bash ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/message.sh \
-  --platform teams \
-  --recipient "jdowzard@jhg.com.au" \
-  --message "Your message"
-```
-
-See [setup guide](messaging-plugin/skills/messaging/references/setup.md) for platform-specific configuration.
-
-</details>
-
-<details>
-<summary><strong>teams-message</strong> - Draft Microsoft Teams messages on macOS (deprecated)</summary>
-
-### teams-message
-
-> **Note:** This plugin has been superseded by the `messaging` plugin which supports multiple platforms.
-
-Draft Microsoft Teams messages via AppleScript automation. Messages are drafted for you to review and send manually.
-
-| Feature | Description |
-|---------|-------------|
-| Platform | macOS only |
-| App | Microsoft Teams desktop |
-| Mode | Draft only (manual send) |
-| Auth | Uses your existing Teams session |
-
-**Quick Start:**
-
-1. Ensure Microsoft Teams is installed and you're signed in
-2. Grant Accessibility permissions to Terminal (System Settings > Privacy & Security > Accessibility)
-3. Ask Claude to send a message:
-
-```
-"Send a Teams message to colleague@company.com saying Hello!"
-```
-
-Or run directly:
-```bash
-bash ${CLAUDE_PLUGIN_ROOT}/skills/teams-message/scripts/teams-message.sh "recipient@email.com" "Your message"
-```
-
-See [setup guide](teams-message-plugin/skills/teams-message/references/setup.md) for detailed configuration.
+See [setup guide](people-plugin/skills/messaging/references/setup.md) for platform-specific configuration.
 
 </details>
 

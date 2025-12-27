@@ -70,6 +70,11 @@ def parse_contact_block(block):
     if rel_match:
         contact['relationship'] = rel_match.group(1).strip()
 
+    # Extract github handle
+    github_match = re.search(r'github:\s*(\S+)', block)
+    if github_match:
+        contact['github'] = github_match.group(1).strip()
+
     # Extract work_keywords
     work_keywords = []
     wk_section = re.search(r'work_keywords:\s*\n((?:\s+#[^\n]*\n)*(?:\s+-\s+.+\n?)+)', block)
@@ -163,6 +168,7 @@ def main():
             'nicknames': contact.get('nicknames', []),
             'context': contact.get('context', 'personal'),
             'relationship': contact.get('relationship', ''),
+            'github': contact.get('github'),
             'work_keywords': contact.get('work_keywords', []),
             'platforms': contact.get('platforms', {}),
             'default_platform': contact.get('default_platform', {})

@@ -10,6 +10,7 @@ contacts:
       - Dowzard
     context: personal_and_work
     relationship: "Personal friend and work colleague at JHG"
+    github: jamesdowzard
     work_keywords:
       # If message contains any of these, use work platform (Teams)
       - John Holland

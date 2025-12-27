@@ -22,18 +22,6 @@
       "category": "data-engineering"
     },
     {
-      "name": "teams-message",
-      "source": "./teams-message-plugin",
-      "description": "Draft Microsoft Teams messages via AppleScript automation on macOS",
-      "version": "1.0.0",
-      "author": {
-        "name": "Liam Wynne"
-      },
-      "license": "MIT",
-      "keywords": ["teams", "microsoft", "messaging", "automation", "applescript", "macos", "productivity"],
-      "category": "productivity"
-    },
-    {
       "name": "statusline",
       "source": "./statusline-plugin",
       "description": "Rich Claude Code status line with context usage, API rate limits, git info, and visual progress bars",
@@ -58,15 +46,15 @@
       "category": "creative"
     },
     {
-      "name": "messaging",
-      "source": "./messaging-plugin",
-      "description": "Multi-platform messaging for Teams, WhatsApp, iMessage, and Messenger on macOS",
-      "version": "1.0.0",
+      "name": "people",
+      "source": "./people-plugin",
+      "description": "Person-directed actions: messaging (Teams, WhatsApp, iMessage, Messenger) and GitHub collaboration",
+      "version": "1.1.0",
       "author": {
         "name": "Liam Wynne"
       },
       "license": "MIT",
-      "keywords": ["messaging", "teams", "whatsapp", "imessage", "messenger", "automation", "applescript", "macos", "productivity"],
+      "keywords": ["people", "contacts", "messaging", "teams", "whatsapp", "imessage", "messenger", "github", "collaborator", "automation", "applescript", "macos", "productivity"],
       "category": "productivity"
     },
     {
