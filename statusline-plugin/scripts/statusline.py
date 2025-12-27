@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -35,8 +36,19 @@ def get_claude_code_token() -> str | None:
             capture_output=True, text=True
         )
         if result.returncode == 0:
-            data = json.loads(result.stdout.strip())
-            return data.get('claudeAiOauth', {}).get('accessToken')
+            raw = result.stdout.strip()
+            # Keychain stores data as hex-encoded string
+            try:
+                decoded = bytes.fromhex(raw).decode('utf-8')
+                # Extract claudeAiOauth JSON object using regex (structure is complex)
+                match = re.search(r'"claudeAiOauth":(\{[^}]+\})', decoded)
+                if match:
+                    oauth_data = json.loads(match.group(1))
+                    return oauth_data.get('accessToken')
+            except (ValueError, UnicodeDecodeError):
+                # Fallback: try parsing as raw JSON (older format)
+                data = json.loads(raw)
+                return data.get('claudeAiOauth', {}).get('accessToken')
     except Exception:
         pass
     return None
