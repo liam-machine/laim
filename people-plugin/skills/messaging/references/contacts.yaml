@@ -9,7 +9,7 @@ contacts:
       - JD
       - Dowzard
     context: personal_and_work
-    relationship: "Personal friend, startup collaborator, and work colleague at JHG"
+    relationship: "Personal friend, 3CC collaborator, and work colleague at JHG"
     github: jamesdowzard
     work_keywords:
       # If message contains any of these, use work platform (Teams)
@@ -60,7 +60,8 @@ contacts:
       - Aidan
       - Wynne
     context: personal
-    relationship: "Brother"
+    relationship: "Brother and WoodsWynne collaborator"
+    github: aidanswynne
     platforms:
       whatsapp:
         phone: "+61466271358"
@@ -76,7 +77,7 @@ contacts:
       - Christine
       - Daghl
     context: personal
-    relationship: "Personal friend and startup collaborator"
+    relationship: "Personal friend and 3CC collaborator"
     github: cdaghl
     default_platform:
       personal: imessage
@@ -86,7 +87,7 @@ contacts:
       - Juan
       - Molina
     context: personal_and_work
-    relationship: "Personal friend, startup collaborator, and work colleague at JHG"
+    relationship: "Personal friend, 3CC collaborator, and work colleague at JHG"
     github: jsam-jhg
     work_keywords:
       - John Holland

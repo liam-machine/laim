@@ -67,9 +67,74 @@ python3 ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/discover-contact.py --nam
 
 This searches the user's macOS Contacts app for phone/email. If Messenger username is needed, you'll need to search the user's Facebook friends list using browser automation.
 
-### Step 3: Auto-Add New Contacts
+### Step 3: Gather Contact Details via AskUserQuestion
 
-After successfully discovering a contact, automatically add them to contacts.yaml:
+Before adding a new contact, **always ask the user** to confirm or provide missing details:
+
+#### Required Information
+
+Use `AskUserQuestion` to gather:
+
+1. **Full Name** (if only first name given):
+   ```json
+   {
+     "question": "What is their full name (first and last)?",
+     "header": "Full name",
+     "options": [
+       {"label": "<First> <guessed last>", "description": "If you can infer from context"},
+       {"label": "Just <First>", "description": "No last name needed"}
+     ]
+   }
+   ```
+
+2. **Relationship**:
+   ```json
+   {
+     "question": "What is your relationship with <Name>?",
+     "header": "Relationship",
+     "options": [
+       {"label": "Personal friend", "description": "Someone you know personally"},
+       {"label": "Work colleague (JHG)", "description": "John Holland Group colleague"},
+       {"label": "3CC collaborator", "description": "ThreeCommasClub startup collaborator"},
+       {"label": "WoodsWynne collaborator", "description": "WoodsWynne startup collaborator"},
+       {"label": "Family member", "description": "Family relationship"}
+     ]
+   }
+   ```
+
+3. **Platforms to add**:
+   ```json
+   {
+     "question": "Which platforms should I add <Name> to?",
+     "header": "Platforms",
+     "multiSelect": true,
+     "options": [
+       {"label": "Teams", "description": "Microsoft Teams (work)"},
+       {"label": "WhatsApp", "description": "WhatsApp messaging"},
+       {"label": "iMessage", "description": "Apple iMessage"},
+       {"label": "Messenger", "description": "Facebook Messenger"}
+     ]
+   }
+   ```
+
+#### Example AskUserQuestion Flow
+
+```
+User: "Add Sarah to my contacts"
+
+Claude uses AskUserQuestion:
+Q1: "What is Sarah's full name?" → "Sarah Thompson"
+Q2: "What is your relationship with Sarah?" → "Personal friend"
+Q3: "Which platforms should I add Sarah to?" → ["WhatsApp", "iMessage"]
+
+Then Claude:
+- Discovers phone number from macOS Contacts
+- Adds to contacts.yaml with gathered details
+```
+
+### Step 4: Add Contact to contacts.yaml
+
+After gathering details, add them to contacts.yaml:
 
 ```bash
 python3 ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/add-contact.py \
@@ -80,6 +145,8 @@ python3 ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/add-contact.py \
   --context personal \
   --relationship "<description>"
 ```
+
+Or directly edit `${CLAUDE_PLUGIN_ROOT}/skills/messaging/references/contacts.yaml`.
 
 ### Complete Flow Example
 
