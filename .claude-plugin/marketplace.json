@@ -68,6 +68,18 @@
       "license": "MIT",
       "keywords": ["messaging", "teams", "whatsapp", "imessage", "messenger", "automation", "applescript", "macos", "productivity"],
       "category": "productivity"
+    },
+    {
+      "name": "repo-creator",
+      "source": "./repo-creator-plugin",
+      "description": "Create repositories, publish to GitHub, and set up virtual environments with the /repo command",
+      "version": "1.0.0",
+      "author": {
+        "name": "Liam Wynne"
+      },
+      "license": "MIT",
+      "keywords": ["repo", "repository", "git", "github", "venv", "conda", "npm", "automation", "productivity"],
+      "category": "productivity"
     }
   ]
 }

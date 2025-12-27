@@ -240,6 +240,48 @@ See [animation reference](manim-web-plugin/skills/manim-web/references/animation
 
 </details>
 
+<details>
+<summary><strong>repo-creator</strong> - Create repositories and publish to GitHub</summary>
+
+### repo-creator
+
+Create repositories with a guided workflow: initialize git, publish to GitHub (personal or organization), and set up virtual environments.
+
+| Feature | Description |
+|---------|-------------|
+| Targets | Personal repos, organization repos |
+| Publishing | GitHub CLI (`gh`) integration |
+| Environments | venv, conda, npm |
+| Config | Persistent path preferences |
+
+**Quick Start:**
+
+```bash
+# Personal repository
+/repo my-new-project
+
+# Organization repository
+/repo my-org-project org
+```
+
+**Workflow:**
+1. Checks/creates config for default paths
+2. Verifies GitHub CLI is installed and authenticated
+3. Creates local repo with `git init`
+4. Publishes to GitHub (private/public choice)
+5. Optionally sets up venv, conda, or npm
+6. Activates environment and confirms setup
+
+**Configuration:**
+
+The skill stores preferences in `~/.claude/repo-creator-config.json`:
+- `personalReposPath` - Default directory for personal repos
+- `configuredPaths` - Saved paths for quick selection
+
+See [configuration guide](repo-creator-plugin/skills/repo-creator/references/configuration.md) for details.
+
+</details>
+
 ## License
 
 MIT

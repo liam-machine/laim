@@ -1,0 +1,10 @@
+{
+  "name": "repo-creator",
+  "version": "1.0.0",
+  "description": "Create repositories, publish to GitHub, and set up virtual environments (venv, conda, npm) with the /repo command",
+  "author": {
+    "name": "Liam Wynne"
+  },
+  "license": "MIT",
+  "keywords": ["repo", "repository", "git", "github", "venv", "conda", "npm", "automation", "productivity"]
+}
