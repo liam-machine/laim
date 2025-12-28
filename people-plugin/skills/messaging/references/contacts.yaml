@@ -140,6 +140,24 @@ contacts:
     default_platform:
       personal: whatsapp
 
+  - name: David Zmood
+    nicknames:
+      - David
+      - Zmood
+      - Boss
+    context: work
+    relationship: "Manager at JHG - Data Platform Architect"
+    work_keywords:
+      - John Holland
+      - JHG
+      - Databricks
+      - pipeline
+    platforms:
+      teams:
+        email: David.Zmood@jhg.com.au
+    default_platform:
+      work: teams
+
 # ============================================================================
 # Template for adding new contacts:
 # ============================================================================
