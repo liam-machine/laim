@@ -61,7 +61,7 @@ contacts:
       - Wynne
     context: personal
     relationship: "Brother and WoodsWynne collaborator"
-    # github: unknown - aidanswynne doesn't exist
+    github: Aidanwynne
     platforms:
       whatsapp:
         phone: "+61466271358"
@@ -113,6 +113,7 @@ contacts:
       - Sean
     context: personal
     relationship: "Personal friend and WoodsWynne startup collaborator"
+    github: seanw00ds
     platforms:
       whatsapp:
         phone: "+61490254358"
