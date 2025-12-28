@@ -68,6 +68,18 @@
       "license": "MIT",
       "keywords": ["repo", "repository", "git", "github", "venv", "conda", "npm", "automation", "productivity"],
       "category": "productivity"
+    },
+    {
+      "name": "ssh-pi",
+      "source": "./ssh-pi",
+      "description": "Execute commands and develop on a Raspberry Pi via SSH",
+      "version": "1.0.0",
+      "author": {
+        "name": "Liam Wynne"
+      },
+      "license": "MIT",
+      "keywords": ["raspberry-pi", "ssh", "remote", "iot", "development", "embedded"],
+      "category": "productivity"
     }
   ]
 }

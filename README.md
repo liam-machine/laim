@@ -58,6 +58,10 @@ laim/
 │   └── skills/
 │       └── repo                       # Create repos, publish to GitHub
 │
+├── ssh-pi/
+│   └── skills/
+│       └── ssh-pi                     # Execute commands on Raspberry Pi via SSH
+│
 └── statusline-plugin/
     └── hooks/                         # Rich status line (no skills, hooks only)
 ```
@@ -68,6 +72,7 @@ laim/
 | **people** | `messaging`, `github-collaborator` | Productivity |
 | **manim-web** | `manim-web` | Creative |
 | **repo-creator** | `repo` | Productivity |
+| **ssh-pi** | `ssh-pi` | Productivity |
 | **statusline** | *(hooks only)* | Productivity |
 
 ## Skills
@@ -275,6 +280,53 @@ The skill stores preferences in `~/.claude/repo-creator-config.json`:
 - `configuredPaths` - Saved paths for quick selection
 
 See [configuration guide](repo-creator-plugin/skills/repo-creator/references/configuration.md) for details.
+
+</details>
+
+<details>
+<summary><strong>ssh-pi</strong> - Execute commands on Raspberry Pi via SSH</summary>
+
+### ssh-pi
+
+Execute commands, run scripts, and manage files on a Raspberry Pi via SSH for local Mac + remote Pi development workflows.
+
+| Feature | Description |
+|---------|-------------|
+| Commands | Execute shell commands via `ssh pi "command"` |
+| Scripts | Run local bash/python scripts on Pi |
+| Sync | rsync directories with common excludes |
+| Helper | Bundled `pi-exec.sh` for info, logs, temp |
+
+**Quick Start:**
+
+1. Configure SSH alias in `~/.ssh/config`:
+```
+Host pi
+    HostName raspberrypi.local
+    User pi
+```
+
+2. Ask Claude:
+```
+"Run htop on the pi"
+"Sync this project to /home/pi/project"
+"Check the pi's temperature"
+"Deploy this script to the raspberry pi and run it"
+```
+
+**Common Operations:**
+```bash
+# Execute command
+ssh pi "python3 --version"
+
+# Sync project
+rsync -avz ./project/ pi:/home/pi/project/
+
+# System info
+${CLAUDE_PLUGIN_ROOT}/skills/ssh-pi/scripts/pi-exec.sh info
+```
+
+See [configuration guide](ssh-pi/skills/ssh-pi/references/configuration.md) for SSH setup.
 
 </details>
 

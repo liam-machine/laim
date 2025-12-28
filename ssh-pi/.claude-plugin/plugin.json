@@ -1,0 +1,10 @@
+{
+  "name": "ssh-pi",
+  "version": "1.0.0",
+  "description": "Execute commands and develop on a Raspberry Pi via SSH",
+  "author": {
+    "name": "Liam Wynne"
+  },
+  "license": "MIT",
+  "keywords": ["raspberry-pi", "ssh", "remote", "iot", "development"]
+}
