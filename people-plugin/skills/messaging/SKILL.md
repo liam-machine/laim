@@ -1,6 +1,6 @@
 ---
 name: messaging
-description: Send and read messages across multiple platforms (Teams, WhatsApp, iMessage, Facebook Messenger). Use this skill when the user wants to "message someone", "text someone", "send a message", "chat with", "read messages from", "get message history", "what did X say", "recent messages with", "check messages", mentions messaging a known contact by name (like James, JD), or specifies a platform like Teams, WhatsApp, iMessage, or Messenger. Supports reading conversation history for context before replying. Drafts messages by default for user review before sending.
+description: Send and read messages across multiple platforms (Teams, WhatsApp, iMessage, Facebook Messenger). Use this skill when the user wants to "message someone", "text someone", "send a message", "chat with", "read messages from", "get message history", "what did X say", "recent messages with", "check messages", "add contact", "add X as a contact", "new contact", "save contact", mentions messaging a known contact by name (like James, JD), or specifies a platform like Teams, WhatsApp, iMessage, or Messenger. Supports reading conversation history for context before replying. Drafts messages by default for user review before sending. When adding contacts, auto-discovers phone numbers and usernames from macOS Contacts, WhatsApp, Teams, and Messenger using browser automation - never ask the user for details that can be discovered automatically.
 ---
 
 # Messaging Skill
@@ -38,7 +38,26 @@ When sending a message, Claude determines the platform using this priority:
 2. **Content inference** - If the message mentions work keywords (John Holland, JHG, Databricks, pipeline, sprint), use the work platform (Teams)
 3. **Ask user** - If unclear, prompt: "Should I message James on Teams (work) or WhatsApp (personal)?"
 
-## How It Works
+## Adding New Contacts
+
+When user asks to "add X as a contact" or "new contact":
+
+**CRITICAL: Auto-discover first, ask later.** Never ask the user for phone numbers, emails, or usernames that can be discovered automatically.
+
+### Quick Workflow
+
+1. **Ask only what can't be discovered**: relationship, platforms, context
+2. **Auto-discover from each platform** (in parallel if possible):
+   - iMessage → `discover-contact.py --name "X"` (macOS Contacts)
+   - WhatsApp → Browser: search contacts, click profile, extract phone
+   - Teams → Browser: search people, click profile, extract email
+   - Messenger → Browser: search, click profile, read username from panel
+3. **Show results**: "Found X: WhatsApp +61..., Messenger username..."
+4. **Add to contacts.yaml**
+
+See "Contact Resolution" section below for detailed steps.
+
+## How It Works (Messaging)
 
 1. **Resolve Contact** - Look up recipient in @references/contacts.yaml
 2. **Select Platform** - Use explicit platform, infer from content, or ask user
@@ -139,7 +158,7 @@ After the user selects platforms, **automatically search each platform** to disc
 | Teams | Browser: Search Teams → Click profile | Work email |
 | WhatsApp | Browser: Search contacts → Open profile | Phone number |
 | iMessage | Script: `discover-contact.py` (macOS Contacts) | Phone number |
-| Messenger | Manual (user must provide) | Username |
+| Messenger | Browser: Search Messenger → Click profile | Username (from profile panel) |
 
 #### Auto-Discovery Workflow
 
@@ -168,9 +187,13 @@ python3 ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/discover-contact.py --nam
 ```
 Uses macOS Contacts app to find phone/email.
 
-**For Messenger**:
-- Cannot auto-discover - user must provide Facebook username
-- Inform user: "I couldn't auto-discover Messenger username. Please provide it or skip this platform."
+**For Messenger** (username):
+```
+1. Navigate to https://www.messenger.com
+2. Click search bar, type contact name
+3. Click matching contact in results
+4. Username appears in profile panel on right (format: name.surname.12345)
+```
 
 #### Auto-Discovery Rules
 

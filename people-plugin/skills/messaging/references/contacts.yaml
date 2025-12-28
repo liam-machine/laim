@@ -108,6 +108,22 @@ contacts:
       work: teams
       personal: whatsapp
 
+  - name: Sean Woods
+    nicknames:
+      - Sean
+      - Woods
+    context: personal
+    relationship: "Personal friend and WoodsWynne startup collaborator"
+    platforms:
+      whatsapp:
+        phone: "+61490254358"
+      imessage:
+        phone: "+61490254358"
+      messenger:
+        username: "sean.woods.73307"
+    default_platform:
+      personal: messenger
+
 # ============================================================================
 # Template for adding new contacts:
 # ============================================================================
