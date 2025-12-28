@@ -29,7 +29,19 @@ CLIENT_ID = '9d1c250a-e61b-44d9-88ed-5944d1962f5e'
 
 
 def get_claude_code_token() -> str | None:
-    """Get token from Claude Code's keychain entry."""
+    """Get token from Claude Code's credentials."""
+    # Linux: Read from ~/.claude/.credentials.json
+    linux_creds = Path.home() / '.claude' / '.credentials.json'
+    if linux_creds.exists():
+        try:
+            data = json.loads(linux_creds.read_text())
+            token = data.get('claudeAiOauth', {}).get('accessToken')
+            if token:
+                return token
+        except Exception:
+            pass
+
+    # macOS: Try keychain
     try:
         result = subprocess.run(
             ['security', 'find-generic-password', '-s', 'Claude Code-credentials', '-w'],
@@ -185,7 +197,7 @@ def make_bar(pct: int, width: int = 8) -> str:
     else:
         # Round up: any non-zero percentage shows at least 1 block
         filled = min(max((pct * width + 99) // 100, 1), width)
-    return '█' * filled + '░' * (width - filled)
+    return '■' * filled + '□' * (width - filled)
 
 
 def bar_color(pct: int, red_threshold: int = 75) -> str:
@@ -312,7 +324,7 @@ def get_git_info(cwd: str) -> str:
             )
             ahead = int(result.stdout.strip() or 0)
             if ahead > 0:
-                status += f'↑{ahead}'
+                status += f'+{ahead}'
 
             # Get behind count
             result = subprocess.run(
@@ -321,12 +333,12 @@ def get_git_info(cwd: str) -> str:
             )
             behind = int(result.stdout.strip() or 0)
             if behind > 0:
-                status += f'↓{behind}'
+                status += f'-{behind}'
 
         # Format output
         if status:
             return f'{BLU}{repo_name}{R}:{YLW}{branch}{R}[{RED}{status}{R}]'
-        return f'{BLU}{repo_name}{R}:{GRN}{branch}{R}[{GRN}✓{R}]'
+        return f'{BLU}{repo_name}{R}:{GRN}{branch}{R}[{GRN}ok{R}]'
 
     except Exception:
         return f'{BLU}{cwd}{R}'
@@ -428,7 +440,7 @@ def main():
     # data['transcript_path'] and categorize messages by their source/role.
     # For now, showing total input vs output tokens.
     # TODO: Parse transcript to show MCP vs agent vs conversation token split
-    token_detail = f'{ctx_tokens_fmt}↓ {output_tokens_fmt}↑'
+    token_detail = f'{ctx_tokens_fmt}in {output_tokens_fmt}out'
 
     # Databricks profile
     db_profile = os.environ.get('DATABRICKS_CONFIG_PROFILE', '')
@@ -440,9 +452,9 @@ def main():
     # Output
     print(
         f'{B}{CYN}{model}{R} | '
-        f'💭 {ctx_clr}{ctx_bar}{R} {ctx_pct}%-{ctx_tokens_fmt}/{ctx_size_fmt} | '
-        f'⏱ {session_clr}{session_bar}{R} {five_hour_pct}%-{session_remaining.strip()} | '
-        f'📅 {weekly_clr}{weekly_bar}{R} {seven_day_pct}%-{week_remaining.strip()} | '
+        f'ctx {ctx_clr}{ctx_bar}{R} {ctx_pct}%-{ctx_tokens_fmt}/{ctx_size_fmt} | '
+        f'5h {session_clr}{session_bar}{R} {five_hour_pct}%-{session_remaining.strip()} | '
+        f'7d {weekly_clr}{weekly_bar}{R} {seven_day_pct}%-{week_remaining.strip()} | '
         f'{GRN}{cost_fmt}{R} | '
         f'{MAG}{dur_fmt}{R} | '
         f'{repo_part}{db_part} | '
