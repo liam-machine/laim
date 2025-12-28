@@ -111,7 +111,6 @@ contacts:
   - name: Sean Woods
     nicknames:
       - Sean
-      - Woods
     context: personal
     relationship: "Personal friend and WoodsWynne startup collaborator"
     platforms:
@@ -123,6 +122,23 @@ contacts:
         username: "sean.woods.73307"
     default_platform:
       personal: messenger
+
+  - name: Mark Woods
+    nicknames:
+      - Mark
+      - Woods
+    context: personal
+    relationship: "Personal friend and WoodsWynne startup collaborator"
+    github: mwoods-1
+    platforms:
+      whatsapp:
+        phone: "+61435068614"
+      imessage:
+        phone: "+61435068614"
+      messenger:
+        username: "mark.woods.1447342"
+    default_platform:
+      personal: whatsapp
 
 # ============================================================================
 # Template for adding new contacts:

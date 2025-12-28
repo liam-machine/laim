@@ -1,13 +1,93 @@
 ---
 name: messaging
-description: Send and read messages across multiple platforms (Teams, WhatsApp, iMessage, Facebook Messenger). Use this skill when the user wants to "message someone", "text someone", "send a message", "chat with", "read messages from", "get message history", "what did X say", "recent messages with", "check messages", "add contact", "add X as a contact", "new contact", "save contact", mentions messaging a known contact by name (like James, JD), or specifies a platform like Teams, WhatsApp, iMessage, or Messenger. Supports reading conversation history for context before replying. Drafts messages by default for user review before sending. When adding contacts, auto-discovers phone numbers and usernames from macOS Contacts, WhatsApp, Teams, and Messenger using browser automation - never ask the user for details that can be discovered automatically.
+description: Add contacts and send messages across multiple platforms (Teams, WhatsApp, iMessage, Facebook Messenger). Use this skill when the user wants to "add contact", "add X as a contact", "new contact", "save contact" (ALWAYS auto-discover details first), OR "message someone", "text someone", "send a message", "chat with", "read messages from", "get message history", "what did X say", "recent messages with", "check messages", mentions messaging a known contact by name (like James, JD), or specifies a platform like Teams, WhatsApp, iMessage, or Messenger. CRITICAL FOR ADDING CONTACTS: Auto-discover phone numbers and usernames from macOS Contacts, WhatsApp, Teams, and Messenger using browser automation - NEVER ask the user for details that can be discovered automatically. NEVER edit contacts.yaml without auto-discovering first.
 ---
 
 # Messaging Skill
 
 Send and read messages across multiple platforms from Claude Code. By default, messages are **drafted** for you to review and send manually. You can also read message history for context.
 
-## Quick Start
+---
+
+## ⚠️ STOP - What Are You Doing?
+
+```
+User request
+├── ADDING A CONTACT? ("add X", "new contact", "save contact")
+│   └── GO TO: "Adding New Contacts" section below
+│       ├── 1. Ask: relationship, platforms (AskUserQuestion)
+│       ├── 2. Auto-discover from EACH platform (scripts + browser)
+│       ├── 3. Show results to user
+│       └── 4. THEN add to contacts.yaml
+│
+├── SENDING A MESSAGE? ("message X", "text X", "WhatsApp X")
+│   └── GO TO: "Sending Messages" section below
+│
+└── READING MESSAGES? ("what did X say", "check messages")
+    └── GO TO: "Reading Message History" section below
+```
+
+**CRITICAL:** When adding contacts, NEVER edit contacts.yaml directly without auto-discovering first. Always run discovery scripts and browser automation to find phone numbers, emails, and usernames automatically.
+
+---
+
+## Adding New Contacts
+
+When user asks to "add X as a contact" or "new contact":
+
+**🚨 AUTO-DISCOVER FIRST, ASK LATER.** Never ask the user for phone numbers, emails, or usernames that can be discovered automatically.
+
+### Workflow Summary
+
+| Step | Action | Details |
+|------|--------|---------|
+| 1 | **Ask only what can't be discovered** | Use AskUserQuestion for: relationship, platforms to add |
+| 2 | **Auto-discover from each platform** | Run in parallel - see table below |
+| 3 | **Show results** | "Found X: WhatsApp +61..., Messenger username..." |
+| 4 | **Add to contacts.yaml** | Only after discovery completes |
+
+### Auto-Discovery Methods (Step 2)
+
+| Platform | Method | What to Extract |
+|----------|--------|-----------------|
+| iMessage | `python3 ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/discover-contact.py --name "X"` | Phone from macOS Contacts |
+| WhatsApp | Browser: search → click profile | Phone number |
+| Teams | Browser: search → click profile | Work email |
+| Messenger | Browser: search → click profile panel | Username (format: name.surname.12345) |
+
+### Auto-Discovery Rules
+
+1. **Search immediately** - Don't ask "Should I search?" - just do it
+2. **Parallel when possible** - Run script + open browser tabs simultaneously
+3. **Skip if not found** - If contact not found on a platform, skip silently
+4. **Show results** - Display what was found before adding to contacts
+
+### Example Flow
+
+```
+User: "Add Sarah to my contacts"
+
+1. AskUserQuestion:
+   - "What is your relationship with Sarah?" → "Personal friend"
+   - "Which platforms?" → [WhatsApp, iMessage, Messenger]
+
+2. Auto-discover (parallel):
+   - discover-contact.py --name "Sarah" → phone: +61412345678
+   - Browser → Messenger search → username: sarah.smith.12345
+
+3. Show results:
+   "Found Sarah:
+    - Phone: +61412345678 (WhatsApp, iMessage)
+    - Messenger: sarah.smith.12345"
+
+4. Add to contacts.yaml
+```
+
+See "Contact Resolution" section below for detailed browser automation steps.
+
+---
+
+## Sending Messages (Quick Start)
 
 ### Prerequisites
 
@@ -30,7 +110,7 @@ Ask Claude to send a message:
 "Teams message to jdowzard@jhg.com.au: Can we sync at 3pm?"
 ```
 
-## Platform Selection Logic
+### Platform Selection Logic
 
 When sending a message, Claude determines the platform using this priority:
 
@@ -38,33 +118,18 @@ When sending a message, Claude determines the platform using this priority:
 2. **Content inference** - If the message mentions work keywords (John Holland, JHG, Databricks, pipeline, sprint), use the work platform (Teams)
 3. **Ask user** - If unclear, prompt: "Should I message James on Teams (work) or WhatsApp (personal)?"
 
-## Adding New Contacts
-
-When user asks to "add X as a contact" or "new contact":
-
-**CRITICAL: Auto-discover first, ask later.** Never ask the user for phone numbers, emails, or usernames that can be discovered automatically.
-
-### Quick Workflow
-
-1. **Ask only what can't be discovered**: relationship, platforms, context
-2. **Auto-discover from each platform** (in parallel if possible):
-   - iMessage → `discover-contact.py --name "X"` (macOS Contacts)
-   - WhatsApp → Browser: search contacts, click profile, extract phone
-   - Teams → Browser: search people, click profile, extract email
-   - Messenger → Browser: search, click profile, read username from panel
-3. **Show results**: "Found X: WhatsApp +61..., Messenger username..."
-4. **Add to contacts.yaml**
-
-See "Contact Resolution" section below for detailed steps.
-
-## How It Works (Messaging)
+### How It Works
 
 1. **Resolve Contact** - Look up recipient in @references/contacts.yaml
 2. **Select Platform** - Use explicit platform, infer from content, or ask user
 3. **Draft Message** - Open the platform and draft the message
 4. **You Review & Send** - Message is ready for you to review and send
 
-## Contact Resolution
+---
+
+## Contact Resolution (Detailed Steps)
+
+This section contains detailed steps for contact lookup and auto-discovery. Referenced by both "Adding New Contacts" and "Sending Messages" workflows.
 
 When a user mentions a contact by name, use the smart lookup flow to avoid loading the full contacts file:
 
