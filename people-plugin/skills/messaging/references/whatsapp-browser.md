@@ -182,3 +182,140 @@ screenshot({ tabId })
 2. **Tab group**: Use existing WhatsApp tab if available to avoid re-auth
 3. **Rate limiting**: Don't send too many messages rapidly
 4. **Privacy**: Messages sent via automation are indistinguishable from manual
+
+---
+
+## Contact Phone Extraction
+
+When adding a new contact, extract their phone number from WhatsApp if they're already in your WhatsApp contacts.
+
+### Phone Extraction Workflow
+
+#### Step 1: Navigate to WhatsApp and Search
+
+```javascript
+// Navigate to WhatsApp Web
+navigate({ url: "https://web.whatsapp.com", tabId })
+wait({ duration: 3, tabId })
+
+// Click search bar
+find({ query: "search bar", tabId })
+computer({ action: "left_click", ref: searchRef, tabId })
+
+// Type contact name
+computer({ action: "type", text: "Sarah", tabId })
+wait({ duration: 2, tabId })
+```
+
+#### Step 2: Click on Contact
+
+```javascript
+// Find and click matching contact in search results
+find({ query: "Sarah in contact list", tabId })
+computer({ action: "left_click", ref: contactRef, tabId })
+wait({ duration: 1, tabId })
+```
+
+#### Step 3: Open Contact Profile
+
+Click on the contact name in the chat header to open their profile:
+
+```javascript
+// Click contact name header to open profile panel
+find({ query: "contact name header at top of chat", tabId })
+computer({ action: "left_click", ref: headerRef, tabId })
+wait({ duration: 1, tabId })
+```
+
+#### Step 4: Extract Phone Number
+
+The phone number is displayed in the profile panel:
+
+```javascript
+javascript_tool({
+  action: "javascript_exec",
+  text: `
+    // Phone number appears in profile panel
+    // Look for the phone section or extract from profile text
+    const profilePanel = document.querySelector('[data-testid="contact-info-drawer"]')
+      || document.querySelector('span[dir="auto"]');
+
+    // Search for phone number pattern in profile
+    const text = document.body.innerText;
+    const phoneMatch = text.match(/\\+?\\d{1,3}[\\s-]?\\d{3,4}[\\s-]?\\d{3,4}[\\s-]?\\d{3,4}/);
+
+    if (phoneMatch) {
+      // Normalize to +61 format
+      let phone = phoneMatch[0].replace(/[\\s-]/g, '');
+      if (phone.startsWith('04')) {
+        phone = '+61' + phone.slice(1);
+      } else if (!phone.startsWith('+')) {
+        phone = '+' + phone;
+      }
+      phone;
+    } else {
+      "Phone not found";
+    }
+  `,
+  tabId
+})
+```
+
+### Complete Phone Extraction Example
+
+```javascript
+// 1. Get browser context
+tabs_context_mcp({ createIfEmpty: true })
+
+// 2. Use existing WhatsApp tab or create new
+const existingTab = availableTabs.find(t => t.url.includes('whatsapp'));
+const tabId = existingTab?.tabId || (await tabs_create_mcp()).tabId;
+
+// 3. Navigate to WhatsApp
+navigate({ url: "https://web.whatsapp.com", tabId })
+wait({ duration: 3, tabId })
+
+// 4. Screenshot to see current state
+computer({ action: "screenshot", tabId })
+
+// 5. Click search bar (top left area)
+computer({ action: "left_click", coordinate: [260, 83], tabId })
+wait({ duration: 0.5, tabId })
+
+// 6. Type contact name
+computer({ action: "type", text: "Sarah Thompson", tabId })
+wait({ duration: 2, tabId })
+
+// 7. Screenshot to see search results
+computer({ action: "screenshot", tabId })
+
+// 8. Click on matching contact in results
+computer({ action: "left_click", coordinate: [contactCoords], tabId })
+wait({ duration: 1, tabId })
+
+// 9. Click contact header to open profile
+computer({ action: "left_click", coordinate: [headerCoords], tabId })
+wait({ duration: 1, tabId })
+
+// 10. Extract phone from profile
+javascript_tool({
+  action: "javascript_exec",
+  text: `
+    const text = document.body.innerText;
+    const phone = text.match(/\\+61\\d{9}/);
+    phone ? phone[0] : null;
+  `,
+  tabId
+})
+```
+
+### Troubleshooting Phone Extraction
+
+#### Issue: Contact not found in search
+**Solution**: The contact may not be in your WhatsApp contacts. Skip this platform.
+
+#### Issue: Profile panel doesn't show phone
+**Solution**: Some contacts hide their phone. Try scrolling the profile panel.
+
+#### Issue: Multiple phone numbers shown
+**Solution**: Extract the first mobile number (starts with +614 for Australian)

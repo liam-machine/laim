@@ -127,9 +127,76 @@ Q1: "What is Sarah's full name?" → "Sarah Thompson"
 Q2: "What is your relationship with Sarah?" → "Personal friend"
 Q3: "Which platforms should I add Sarah to?" → ["WhatsApp", "iMessage"]
 
-Then Claude:
-- Discovers phone number from macOS Contacts
-- Adds to contacts.yaml with gathered details
+Then Claude auto-discovers from selected platforms (see Step 3b)
+```
+
+### Step 3b: Auto-Discover from Selected Platforms
+
+After the user selects platforms, **automatically search each platform** to discover contact details. Do not ask for confirmation - just search.
+
+| Platform Selected | Auto-Discovery Method | Data Extracted |
+|-------------------|----------------------|----------------|
+| Teams | Browser: Search Teams → Click profile | Work email |
+| WhatsApp | Browser: Search contacts → Open profile | Phone number |
+| iMessage | Script: `discover-contact.py` (macOS Contacts) | Phone number |
+| Messenger | Manual (user must provide) | Username |
+
+#### Auto-Discovery Workflow
+
+**For Teams** (work email):
+```
+1. Navigate to https://teams.microsoft.com
+2. Click search bar, type contact name
+3. Click matching profile (look for -JHG suffix)
+4. Extract email from profile card
+```
+See @references/teams-browser.md for detailed steps.
+
+**For WhatsApp** (phone number):
+```
+1. Navigate to https://web.whatsapp.com
+2. Click search bar, type contact name
+3. Click matching contact in results
+4. Click contact name header to open profile
+5. Extract phone number from profile panel
+```
+See @references/whatsapp-browser.md for detailed steps.
+
+**For iMessage** (phone number):
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/messaging/scripts/discover-contact.py --name "<name>"
+```
+Uses macOS Contacts app to find phone/email.
+
+**For Messenger**:
+- Cannot auto-discover - user must provide Facebook username
+- Inform user: "I couldn't auto-discover Messenger username. Please provide it or skip this platform."
+
+#### Auto-Discovery Rules
+
+1. **Search immediately** - Don't ask "Should I search?" - just do it
+2. **Skip if not found** - If contact not found on a platform, skip it silently
+3. **Show results** - After discovery, show what was found before adding to contacts
+4. **Parallel when possible** - Search multiple platforms simultaneously
+
+#### Example Auto-Discovery Flow
+
+```
+User selected: [Teams, WhatsApp]
+
+1. Search Teams for "Sarah Thompson"
+   → Found: sthompson@jhg.com.au
+
+2. Search WhatsApp for "Sarah Thompson"
+   → Found: +61412345678
+
+3. Show results:
+   "Found Sarah Thompson:
+    - Teams: sthompson@jhg.com.au
+    - WhatsApp: +61412345678
+    Adding to contacts..."
+
+4. Add to contacts.yaml
 ```
 
 ### Step 4: Add Contact to contacts.yaml
