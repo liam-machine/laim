@@ -62,6 +62,10 @@ laim/
 │   └── skills/
 │       └── ssh-pi                     # Execute commands on Raspberry Pi via SSH
 │
+├── next-feature-plugin/
+│   └── skills/
+│       └── next-feature               # Implement next feature from features.json
+│
 └── statusline-plugin/
     └── hooks/                         # Rich status line (no skills, hooks only)
 ```
@@ -73,6 +77,7 @@ laim/
 | **manim-web** | `manim-web` | Creative |
 | **repo-creator** | `repo` | Productivity |
 | **ssh-pi** | `ssh-pi` | Productivity |
+| **next-feature** | `next-feature` | Productivity |
 | **statusline** | *(hooks only)* | Productivity |
 
 ## Skills
@@ -327,6 +332,31 @@ ${CLAUDE_PLUGIN_ROOT}/skills/ssh-pi/scripts/pi-exec.sh info
 ```
 
 See [configuration guide](ssh-pi/skills/ssh-pi/references/configuration.md) for SSH setup.
+
+</details>
+
+<details>
+<summary><strong>next-feature</strong> - Implement the next feature from features.json</summary>
+
+### next-feature
+
+Slash command that reads features.json and implements the next feature using the feature-dev agent, with Chrome browser automation and automatic commits.
+
+| Feature | Description |
+|---------|-------------|
+| Input | Reads `features.json` from project root |
+| Agent | Uses feature-dev agent for implementation |
+| Browser | Chrome automation when needed |
+| Commit | Auto-commits after validation |
+
+**Quick Start:**
+```bash
+/next-feature
+```
+
+**Requirements:**
+- A `features.json` file in your project with feature definitions
+- The feature-dev plugin installed for guided implementation
 
 </details>
 

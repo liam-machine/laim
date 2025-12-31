@@ -1,0 +1,10 @@
+{
+  "name": "next-feature",
+  "version": "1.0.0",
+  "description": "Implement the next feature from features.json using the feature-dev agent",
+  "author": {
+    "name": "Liam Wynne"
+  },
+  "license": "MIT",
+  "keywords": ["feature", "development", "automation", "workflow", "feature-dev"]
+}
