@@ -63,8 +63,8 @@ laim/
 │       └── ssh-pi                     # Execute commands on Raspberry Pi via SSH
 │
 ├── next-feature-plugin/
-│   └── skills/
-│       └── next-feature               # Implement next feature from features.json
+│   └── commands/
+│       └── next-feature.md            # /next-feature slash command
 │
 └── statusline-plugin/
     └── hooks/                         # Rich status line (no skills, hooks only)
@@ -77,7 +77,7 @@ laim/
 | **manim-web** | `manim-web` | Creative |
 | **repo-creator** | `repo` | Productivity |
 | **ssh-pi** | `ssh-pi` | Productivity |
-| **next-feature** | `next-feature` | Productivity |
+| **next-feature** | `/next-feature` *(command)* | Productivity |
 | **statusline** | *(hooks only)* | Productivity |
 
 ## Skills
