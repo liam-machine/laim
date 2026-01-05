@@ -2,7 +2,9 @@
 
 ## API Version
 
-This skill uses the **Execution Context API 1.2** which provides direct code execution on running clusters.
+The `/db:execute` command uses the **Execution Context API 1.2** which provides direct code execution on running Spark clusters.
+
+> **Note**: This API is separate from the Statement Execution API used by `/db:query`. Use Execution Context for multi-language code execution on clusters; use Statement Execution for SQL queries on warehouses.
 
 ## Endpoints
 

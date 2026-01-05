@@ -42,12 +42,8 @@ Restart or start a new session to activate the plugin.
 ```
 laim/
 ├── databricks-plugin/
-│   ├── skills/databricks/             # Comprehensive Databricks admin
+│   ├── skills/databricks/             # Comprehensive Databricks admin (13 commands)
 │   └── commands/                      # /db:* slash commands
-│
-├── databricks-executor-plugin/
-│   └── skills/
-│       └── databricks-executor        # Execute code on Databricks clusters
 │
 ├── people-plugin/
 │   └── skills/
@@ -76,8 +72,7 @@ laim/
 
 | Plugin | Skills | Category |
 |--------|--------|----------|
-| **databricks** | `databricks` + 6 commands | Data Engineering |
-| **databricks-executor** | `databricks-executor` | Data Engineering |
+| **databricks** | `databricks` + 13 commands | Data Engineering |
 | **people** | `messaging`, `github-collaborator` | Productivity |
 | **manim-web** | `manim-web` | Creative |
 | **repo-creator** | `repo` | Productivity |
@@ -94,22 +89,35 @@ Skills are auto-triggered based on context — Claude automatically uses them wh
 
 ### databricks
 
-Full Databricks administration across multiple workspaces: SQL queries, clusters, warehouses, jobs, and more.
+Full Databricks administration across multiple workspaces: SQL queries, code execution, clusters, warehouses, jobs, secrets, Unity Catalog, pipelines, dashboards, permissions, and deployments.
 
 | Feature | Description |
 |---------|-------------|
 | Multi-Workspace | Support for multiple profiles (DEV, PROD, UAT, etc.) |
 | SQL Queries | Execute queries via SQL warehouses |
+| Code Execution | Python, SQL, Scala, R on Spark clusters (REPL supported) |
 | Clusters | Start, stop, list Spark clusters |
 | Warehouses | Manage SQL warehouses |
 | Jobs | List, trigger, monitor job runs |
-| Profiles | Auto-detect from `~/.databrickscfg` |
+| Secrets | Secret scopes and values |
+| Unity Catalog | Catalogs, schemas, tables, volumes, grants |
+| Pipelines | Delta Live Tables / Lakeflow management |
+| Dashboards | Lakeview dashboard management |
+| Permissions | Object-level ACLs and grants |
+| Deployment | DAB bundle validate, deploy, destroy |
 
 **Commands:**
-- `/db:query` — Execute SQL queries
+- `/db:query` — Execute SQL queries on warehouses
+- `/db:execute` — Execute code on Spark clusters (Python, SQL, Scala, R)
 - `/db:clusters` — Cluster management
 - `/db:warehouses` — Warehouse management
 - `/db:jobs` — Job and run management
+- `/db:secrets` — Secret scope management
+- `/db:catalog` — Unity Catalog operations
+- `/db:pipelines` — DLT/Lakeflow pipeline management
+- `/db:lakeview` — Lakeview dashboard management
+- `/db:permissions` — Object-level permissions
+- `/db:deploy` — DAB bundle deployments
 - `/db:profiles` — List and test profiles
 - `/db:setup` — Initial configuration
 
@@ -118,43 +126,20 @@ Full Databricks administration across multiple workspaces: SQL queries, clusters
 # List your profiles
 python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_profiles.py list
 
-# Run a query
+# Run SQL on warehouse
 python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_query.py -c "SHOW DATABASES" -p DEV
 
-# List clusters
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_clusters.py list -p DEV
+# Run Python on Spark cluster
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_execute.py -c "print(spark.version)" -p DEV
+
+# Interactive REPL
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_execute.py --repl -p DEV
+
+# List Unity Catalog tables
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_catalog.py tables main.default -p DEV
 ```
 
 See [configuration guide](databricks-plugin/skills/databricks/references/configuration.md) for setup.
-
-</details>
-
-<details>
-<summary><strong>databricks-executor</strong> - Execute code on Databricks clusters</summary>
-
-### databricks-executor
-
-Execute Python, SQL, Scala, or R code on Databricks clusters via the Execution Context API.
-
-| Feature | Description |
-|---------|-------------|
-| Languages | Python, SQL, Scala, R |
-| Auth | CLI args, env vars, `~/.databrickscfg` |
-| Output | text, JSON, CSV |
-| Modes | Single command, file execution, REPL |
-
-**Quick Start:**
-```bash
-# Set credentials
-export DATABRICKS_HOST="https://adb-xxx.azuredatabricks.net"
-export DATABRICKS_TOKEN="dapi-xxx"
-export DATABRICKS_CLUSTER_ID="cluster-id"
-
-# Execute code
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks-executor/scripts/databricks_exec.py -c "print(spark.version)"
-```
-
-See [configuration guide](databricks-executor-plugin/skills/databricks-executor/references/configuration.md) for detailed setup.
 
 </details>
 

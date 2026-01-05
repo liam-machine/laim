@@ -1,6 +1,6 @@
 ---
 name: databricks
-description: All Databricks operations - SQL queries, clusters, warehouses, jobs, deployments, secrets, and monitoring. Triggers on "run query on Databricks", "check job status", "start cluster", "list warehouses", "deploy bundle", "check compute usage", or any Databricks administration task.
+description: Comprehensive Databricks administration - SQL queries, code execution, clusters, warehouses, jobs, secrets, Unity Catalog, pipelines, dashboards, permissions, and bundle deployments. Triggers on "run query on Databricks", "execute on cluster", "Spark query", "PySpark", "databricks REPL", "check job status", "start cluster", "list warehouses", "deploy bundle", "manage secrets", "Unity Catalog", "DLT pipeline", "Lakeview dashboard", or any Databricks administration task.
 ---
 
 # Databricks
@@ -13,18 +13,19 @@ Route to the appropriate command based on the task:
 
 | Task | Command | When to Use |
 |------|---------|-------------|
-| **Execute SQL** | `/db:query` | Running queries, exploring data |
+| **Execute SQL** | `/db:query` | SQL queries via SQL warehouses |
+| **Execute code** | `/db:execute` | Python/SQL/Scala/R on Spark clusters |
 | **Manage clusters** | `/db:clusters` | Start, stop, list Spark clusters |
 | **Manage warehouses** | `/db:warehouses` | Start, stop, list SQL warehouses |
 | **Manage jobs** | `/db:jobs` | List, trigger, cancel jobs |
-| **View runs** | `/db:runs` | Check run status, debug failures |
-| **Deploy bundles** | `/db:deploy` | DAB validate, deploy, run |
 | **Manage secrets** | `/db:secrets` | Secret scopes and values |
-| **Unity Catalog** | `/db:tables` | Tables, schemas, catalogs |
+| **Unity Catalog** | `/db:catalog` | Catalogs, schemas, tables, volumes, grants |
+| **Pipelines** | `/db:pipelines` | Delta Live Tables / Lakeflow |
 | **Dashboards** | `/db:lakeview` | Lakeview dashboard management |
-| **Permissions** | `/db:permissions` | ACLs and grants |
-| **Setup** | `/db:setup` | Initial configuration |
+| **Permissions** | `/db:permissions` | Object-level ACLs and grants |
+| **Deploy bundles** | `/db:deploy` | DAB validate, deploy, destroy |
 | **Profiles** | `/db:profiles` | List and test workspace profiles |
+| **Setup** | `/db:setup` | Initial configuration |
 
 ## Quick Start
 
@@ -34,7 +35,7 @@ Route to the appropriate command based on the task:
 python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_profiles.py list
 ```
 
-### Execute a Query
+### Execute SQL on Warehouses
 
 ```bash
 # Using default profile
@@ -42,6 +43,19 @@ python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_query.py -c "SHOW DAT
 
 # Using specific profile
 python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_query.py -c "SELECT * FROM catalog.schema.table LIMIT 10" -p DEV
+```
+
+### Execute Code on Clusters
+
+```bash
+# Python on Spark cluster
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_execute.py -c "print(spark.version)" -p DEV
+
+# SQL on Spark cluster
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_execute.py -l sql -c "SHOW DATABASES" -p DEV
+
+# Interactive REPL
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_execute.py --repl -p DEV
 ```
 
 ### Manage Clusters

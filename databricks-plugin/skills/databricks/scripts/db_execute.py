@@ -1,129 +1,93 @@
 #!/usr/bin/env python3
 """
-Databricks Execution Context - Execute arbitrary code on Databricks clusters.
+db_execute.py - Execute arbitrary code on Databricks Spark clusters.
 
-A fully templated, configurable script for executing Python, SQL, or Scala code
-on Databricks clusters via the Execution Context API (1.2).
-
-Configuration can be provided via:
-1. CLI arguments (highest priority)
-2. Environment variables
-3. ~/.databrickscfg profile (lowest priority)
+Uses the Execution Context API (1.2) to run Python, SQL, Scala, or R code
+directly on Spark clusters with persistent execution contexts.
 
 Usage:
-    # Execute Python command using default profile
-    python databricks_exec.py -c "print(spark.version)"
+    db_execute.py -c "print(spark.version)" [-p PROFILE] [--cluster CLUSTER_ID]
+    db_execute.py -f script.py [-p PROFILE] [-l LANGUAGE]
+    db_execute.py --repl [-p PROFILE]
 
-    # Execute SQL query
-    python databricks_exec.py --language sql -c "SHOW DATABASES"
-
-    # Execute a file
-    python databricks_exec.py -f script.py
-
-    # Use specific profile and cluster
-    python databricks_exec.py --profile PROD --cluster-id "abc-123-xyz" -c "spark.sql('SELECT 1').show()"
-
-    # Use environment variables for auth
-    DATABRICKS_HOST=https://adb-xxx.azuredatabricks.net DATABRICKS_TOKEN=xxx python databricks_exec.py -c "print(1)"
-
-    # Interactive REPL mode
-    python databricks_exec.py --repl
-
-Environment Variables:
-    DATABRICKS_HOST       - Databricks workspace URL
-    DATABRICKS_TOKEN      - Personal access token or OAuth token
-    DATABRICKS_CLUSTER_ID - Default cluster ID
-    DATABRICKS_PROFILE    - Profile name in ~/.databrickscfg
+Examples:
+    db_execute.py -c "print(spark.version)" -p DEV
+    db_execute.py -l sql -c "SHOW DATABASES" -p PROD
+    db_execute.py -f etl_script.py -p DEV
+    db_execute.py --repl -p DEV
 """
 
 import argparse
-import configparser
 import json
-import os
 import sys
 import time
-from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
 import urllib.request
 import urllib.error
+from pathlib import Path
+from typing import Any, Dict, Optional
+
+# Add _lib to path
+sys.path.insert(0, str(Path(__file__).parent))
+
+from _lib.config import get_profiles, get_default_profile, get_profile_host
+from _lib.auth import validate_profile
+from _lib.output import print_error
 
 
-class DatabricksConfig:
-    """Configuration loader with fallback chain: CLI -> ENV -> Config file."""
+class ExecutorConfig:
+    """Configuration for Execution Context API using _lib for profile management."""
 
     def __init__(
         self,
+        profile: Optional[str] = None,
         host: Optional[str] = None,
         token: Optional[str] = None,
         cluster_id: Optional[str] = None,
-        profile: Optional[str] = None,
     ):
+        self.profile = profile or get_default_profile()
         self.host = host
         self.token = token
         self.cluster_id = cluster_id
-        self.profile = profile or os.environ.get("DATABRICKS_PROFILE", "DEFAULT")
 
         self._resolve_config()
 
     def _resolve_config(self) -> None:
-        """Resolve configuration from environment and config file."""
-        # Try environment variables first
-        if not self.host:
-            self.host = os.environ.get("DATABRICKS_HOST")
-        if not self.token:
-            self.token = os.environ.get("DATABRICKS_TOKEN")
-        if not self.cluster_id:
-            self.cluster_id = os.environ.get("DATABRICKS_CLUSTER_ID")
+        """Resolve configuration from profile if not explicitly provided."""
+        profiles = get_profiles()
 
-        # Fall back to config file
-        if not self.host or not self.token:
-            self._load_from_config_file()
+        if self.profile in profiles:
+            profile_data = profiles[self.profile]
 
-    def _load_from_config_file(self) -> None:
-        """Load missing values from ~/.databrickscfg."""
-        config_path = Path.home() / ".databrickscfg"
+            if not self.host:
+                self.host = profile_data.get('host')
+            if not self.token:
+                self.token = profile_data.get('token')
+            if not self.cluster_id:
+                self.cluster_id = profile_data.get('cluster_id')
 
-        if not config_path.exists():
-            return
-
-        config = configparser.ConfigParser()
-        config.read(config_path)
-
-        if self.profile not in config:
-            # Try DEFAULT profile
-            if "DEFAULT" in config:
-                self.profile = "DEFAULT"
-            else:
-                return
-
-        section = config[self.profile]
-
-        if not self.host:
-            self.host = section.get("host", "").strip()
-        if not self.token:
-            self.token = section.get("token", "").strip()
-        if not self.cluster_id:
-            self.cluster_id = section.get("cluster_id", "").strip()
+        # Normalize host
+        if self.host:
+            self.host = self.host.rstrip('/')
 
     def validate(self) -> None:
         """Validate that required configuration is present."""
         missing = []
         if not self.host:
-            missing.append("host (DATABRICKS_HOST or --host)")
+            missing.append("host (configure in ~/.databrickscfg or use --host)")
         if not self.token:
-            missing.append("token (DATABRICKS_TOKEN or --token)")
+            missing.append("token (configure in ~/.databrickscfg or use --token)")
         if not self.cluster_id:
-            missing.append("cluster_id (DATABRICKS_CLUSTER_ID or --cluster-id)")
+            missing.append("cluster_id (configure in ~/.databrickscfg or use --cluster-id)")
 
         if missing:
             raise ValueError(
                 f"Missing required configuration: {', '.join(missing)}\n"
-                "Provide via CLI arguments, environment variables, or ~/.databrickscfg"
+                f"Configure via ~/.databrickscfg profile [{self.profile}] or CLI arguments"
             )
 
 
 def api_request(
-    config: DatabricksConfig,
+    config: ExecutorConfig,
     method: str,
     endpoint: str,
     data: Optional[Dict[str, Any]] = None,
@@ -131,7 +95,7 @@ def api_request(
     timeout: int = 60,
 ) -> Dict[str, Any]:
     """Make a request to the Databricks REST API."""
-    url = f"{config.host.rstrip('/')}{endpoint}"
+    url = f"{config.host}{endpoint}"
 
     if params:
         query_string = "&".join(f"{k}={v}" for k, v in params.items())
@@ -163,7 +127,7 @@ class ExecutionContext:
 
     def __init__(
         self,
-        config: DatabricksConfig,
+        config: ExecutorConfig,
         language: str = "python",
         poll_interval: float = 0.5,
         verbose: bool = False,
@@ -384,7 +348,7 @@ def run_file(ctx: ExecutionContext, file_path: str, output_format: str = "text")
     path = Path(file_path)
 
     if not path.exists():
-        print(f"Error: File not found: {file_path}", file=sys.stderr)
+        print_error(f"File not found: {file_path}")
         return 1
 
     content = path.read_text()
@@ -461,37 +425,28 @@ def main():
         epilog="""
 Examples:
   # Execute Python command
-  python databricks_exec.py -c "print(spark.version)"
+  python db_execute.py -c "print(spark.version)" -p DEV
 
   # Execute SQL query
-  python databricks_exec.py --language sql -c "SHOW DATABASES"
+  python db_execute.py -l sql -c "SHOW DATABASES" -p PROD
 
   # Execute a file
-  python databricks_exec.py -f my_script.py
-
-  # Use specific profile
-  python databricks_exec.py --profile DEV -c "print(1)"
+  python db_execute.py -f my_script.py -p DEV
 
   # Interactive REPL
-  python databricks_exec.py --repl
+  python db_execute.py --repl -p DEV
 
   # Check cluster state
-  python databricks_exec.py --check-cluster
-
-Environment Variables:
-  DATABRICKS_HOST       - Workspace URL (e.g., https://adb-xxx.azuredatabricks.net)
-  DATABRICKS_TOKEN      - Personal access token
-  DATABRICKS_CLUSTER_ID - Default cluster ID
-  DATABRICKS_PROFILE    - Profile name in ~/.databrickscfg
+  python db_execute.py --check-cluster -p DEV
         """,
     )
 
     # Connection arguments
     conn_group = parser.add_argument_group("Connection")
-    conn_group.add_argument("--host", help="Databricks workspace URL")
-    conn_group.add_argument("--token", help="Personal access token")
-    conn_group.add_argument("--cluster-id", help="Cluster ID to execute on")
-    conn_group.add_argument("--profile", help="Profile name in ~/.databrickscfg")
+    conn_group.add_argument("-p", "--profile", help="Databricks profile from ~/.databrickscfg")
+    conn_group.add_argument("--host", help="Databricks workspace URL (override profile)")
+    conn_group.add_argument("--token", help="Personal access token (override profile)")
+    conn_group.add_argument("--cluster-id", help="Cluster ID (override profile)")
 
     # Execution arguments
     exec_group = parser.add_argument_group("Execution")
@@ -499,7 +454,7 @@ Environment Variables:
     exec_group.add_argument("-f", "--file", help="File to execute")
     exec_group.add_argument("--repl", action="store_true", help="Start interactive REPL")
     exec_group.add_argument(
-        "--language",
+        "-l", "--language",
         choices=ExecutionContext.SUPPORTED_LANGUAGES,
         default="python",
         help="Language for execution (default: python)",
@@ -508,7 +463,7 @@ Environment Variables:
     # Output arguments
     output_group = parser.add_argument_group("Output")
     output_group.add_argument(
-        "--output-format",
+        "-o", "--output",
         choices=["text", "json", "csv"],
         default="text",
         help="Output format for tabular results (default: text)",
@@ -529,14 +484,14 @@ Environment Variables:
 
     # Build configuration
     try:
-        config = DatabricksConfig(
+        config = ExecutorConfig(
+            profile=args.profile,
             host=args.host,
             token=args.token,
             cluster_id=args.cluster_id,
-            profile=args.profile,
         )
     except Exception as e:
-        print(f"Configuration error: {e}", file=sys.stderr)
+        print_error(f"Configuration error: {e}")
         return 1
 
     # Check cluster state if requested
@@ -548,7 +503,7 @@ Environment Variables:
             print(f"Cluster state: {state}")
             return 0 if state == "RUNNING" else 1
         except Exception as e:
-            print(f"Error checking cluster: {e}", file=sys.stderr)
+            print_error(f"Error checking cluster: {e}")
             return 1
 
     # Validate we have execution mode
@@ -561,7 +516,7 @@ Environment Variables:
     try:
         config.validate()
     except ValueError as e:
-        print(f"Configuration error: {e}", file=sys.stderr)
+        print_error(str(e))
         return 1
 
     # Create execution context
@@ -577,9 +532,9 @@ Environment Variables:
         run_repl(ctx)
         return 0
     elif args.command:
-        return run_command(ctx, args.command, args.output_format)
+        return run_command(ctx, args.command, args.output)
     elif args.file:
-        return run_file(ctx, args.file, args.output_format)
+        return run_file(ctx, args.file, args.output)
 
     return 0
 

@@ -1,9 +1,0 @@
-{
-  "name": "databricks-executor",
-  "version": "1.0.0",
-  "description": "Execute arbitrary Python, SQL, Scala, or R code on Databricks clusters via the Execution Context API",
-  "author": {
-    "name": "Liam Wynne"
-  },
-  "keywords": ["databricks", "spark", "pyspark", "sql", "data-engineering", "cluster", "execution"]
-}
