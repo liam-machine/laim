@@ -92,6 +92,18 @@
       "license": "MIT",
       "keywords": ["feature", "development", "automation", "workflow", "feature-dev"],
       "category": "productivity"
+    },
+    {
+      "name": "databricks",
+      "source": "./databricks-plugin",
+      "description": "Comprehensive Databricks administration - SQL queries, clusters, warehouses, jobs, deployments, secrets, and monitoring across multiple workspaces",
+      "version": "1.0.0",
+      "author": {
+        "name": "Liam Wynne"
+      },
+      "license": "MIT",
+      "keywords": ["databricks", "spark", "sql", "clusters", "warehouses", "jobs", "unity-catalog", "data-engineering", "administration"],
+      "category": "data-engineering"
     }
   ]
 }

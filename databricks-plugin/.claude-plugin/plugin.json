@@ -1,0 +1,10 @@
+{
+  "name": "databricks",
+  "version": "1.0.0",
+  "description": "Comprehensive Databricks administration - SQL queries, clusters, warehouses, jobs, deployments, secrets, and monitoring across multiple workspaces",
+  "author": {
+    "name": "Liam Wynne"
+  },
+  "repository": "https://github.com/liam-machine/laim",
+  "license": "MIT"
+}

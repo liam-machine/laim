@@ -41,6 +41,10 @@ Restart or start a new session to activate the plugin.
 
 ```
 laim/
+├── databricks-plugin/
+│   ├── skills/databricks/             # Comprehensive Databricks admin
+│   └── commands/                      # /db:* slash commands
+│
 ├── databricks-executor-plugin/
 │   └── skills/
 │       └── databricks-executor        # Execute code on Databricks clusters
@@ -72,6 +76,7 @@ laim/
 
 | Plugin | Skills | Category |
 |--------|--------|----------|
+| **databricks** | `databricks` + 6 commands | Data Engineering |
 | **databricks-executor** | `databricks-executor` | Data Engineering |
 | **people** | `messaging`, `github-collaborator` | Productivity |
 | **manim-web** | `manim-web` | Creative |
@@ -83,6 +88,46 @@ laim/
 ## Skills
 
 Skills are auto-triggered based on context — Claude automatically uses them when relevant.
+
+<details>
+<summary><strong>databricks</strong> - Comprehensive Databricks administration</summary>
+
+### databricks
+
+Full Databricks administration across multiple workspaces: SQL queries, clusters, warehouses, jobs, and more.
+
+| Feature | Description |
+|---------|-------------|
+| Multi-Workspace | Support for multiple profiles (DEV, PROD, UAT, etc.) |
+| SQL Queries | Execute queries via SQL warehouses |
+| Clusters | Start, stop, list Spark clusters |
+| Warehouses | Manage SQL warehouses |
+| Jobs | List, trigger, monitor job runs |
+| Profiles | Auto-detect from `~/.databrickscfg` |
+
+**Commands:**
+- `/db:query` — Execute SQL queries
+- `/db:clusters` — Cluster management
+- `/db:warehouses` — Warehouse management
+- `/db:jobs` — Job and run management
+- `/db:profiles` — List and test profiles
+- `/db:setup` — Initial configuration
+
+**Quick Start:**
+```bash
+# List your profiles
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_profiles.py list
+
+# Run a query
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_query.py -c "SHOW DATABASES" -p DEV
+
+# List clusters
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_clusters.py list -p DEV
+```
+
+See [configuration guide](databricks-plugin/skills/databricks/references/configuration.md) for setup.
+
+</details>
 
 <details>
 <summary><strong>databricks-executor</strong> - Execute code on Databricks clusters</summary>
