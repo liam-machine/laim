@@ -117,19 +117,28 @@ def refresh_token() -> str | None:
         return None
 
 
-def get_usage() -> tuple[int, int]:
-    """Get 5-hour and 7-day usage percentages from Anthropic API."""
+def get_usage() -> tuple[int, int, str | None, str | None]:
+    """Get 5-hour and 7-day usage percentages and reset times from Anthropic API.
+
+    Returns:
+        Tuple of (five_hour_pct, seven_day_pct, five_hour_resets_at, seven_day_resets_at)
+        Reset times are ISO 8601 strings or None if not available.
+    """
     now = time.time()
 
-    # Check cache
+    # Check cache - now includes reset times
     if USAGE_CACHE.exists():
         try:
-            parts = USAGE_CACHE.read_text().strip().split()
-            if len(parts) == 3:
-                cache_time, five_hour, seven_day = float(parts[0]), int(parts[1]), int(parts[2])
-                if now - cache_time < USAGE_MAX_AGE:
-                    return five_hour, seven_day
-        except (ValueError, IndexError):
+            cache_data = json.loads(USAGE_CACHE.read_text())
+            cache_time = cache_data.get('time', 0)
+            if now - cache_time < USAGE_MAX_AGE:
+                return (
+                    cache_data.get('five_hour', 0),
+                    cache_data.get('seven_day', 0),
+                    cache_data.get('five_hour_resets_at'),
+                    cache_data.get('seven_day_resets_at')
+                )
+        except (ValueError, json.JSONDecodeError):
             pass
 
     # Try Claude Code's keychain first (always fresh)
@@ -150,7 +159,7 @@ def get_usage() -> tuple[int, int]:
             pass
 
     if not token:
-        return 0, 0
+        return 0, 0, None, None
 
     try:
         import urllib.request
@@ -177,17 +186,29 @@ def get_usage() -> tuple[int, int]:
                 with urllib.request.urlopen(req, timeout=5) as resp:
                     data = json.loads(resp.read())
             else:
-                return 0, 0
+                return 0, 0, None, None
 
-        five_hour = round(data.get('five_hour', {}).get('utilization', 0))
-        seven_day = round(data.get('seven_day', {}).get('utilization', 0))
+        five_hour_data = data.get('five_hour') or {}
+        seven_day_data = data.get('seven_day') or {}
 
-        # Update cache
-        USAGE_CACHE.write_text(f'{now} {five_hour} {seven_day}')
+        five_hour = round(five_hour_data.get('utilization', 0))
+        seven_day = round(seven_day_data.get('utilization', 0))
+        five_hour_resets_at = five_hour_data.get('resets_at')
+        seven_day_resets_at = seven_day_data.get('resets_at')
 
-        return five_hour, seven_day
+        # Update cache with all data as JSON
+        cache_data = {
+            'time': now,
+            'five_hour': five_hour,
+            'seven_day': seven_day,
+            'five_hour_resets_at': five_hour_resets_at,
+            'seven_day_resets_at': seven_day_resets_at
+        }
+        USAGE_CACHE.write_text(json.dumps(cache_data))
+
+        return five_hour, seven_day, five_hour_resets_at, seven_day_resets_at
     except Exception:
-        return 0, 0
+        return 0, 0, None, None
 
 
 def make_bar(pct: int, width: int = 8) -> str:
@@ -247,21 +268,61 @@ def get_week_remaining() -> str:
     return result.rjust(5)
 
 
-def get_session_remaining(session_pct: int) -> str:
-    """Get time remaining in 5-hour session window."""
-    # 5-hour window = 300 minutes
-    total_minutes = 300
-    remaining_pct = 100 - session_pct
-    remaining_minutes = (remaining_pct * total_minutes) // 100
+def get_time_until_reset(resets_at: str | None) -> str:
+    """Get time remaining until reset from ISO 8601 timestamp.
 
-    hours = remaining_minutes // 60
-    minutes = remaining_minutes % 60
+    Uses the actual reset time from Anthropic's API (single source of truth).
+    """
+    if not resets_at:
+        return '  ?  '
 
-    if hours > 0:
-        result = f'{hours}h{minutes:02d}m'
-    else:
-        result = f'{minutes}m'
-    return result.rjust(5)
+    try:
+        # Parse ISO 8601 timestamp (e.g., "2025-11-04T04:59:59.943648+00:00")
+        # Remove microseconds for simpler parsing if present
+        if '.' in resets_at:
+            resets_at = resets_at.split('.')[0] + resets_at[resets_at.rfind('+'):]
+
+        # Handle timezone offset
+        if '+' in resets_at:
+            dt_str, tz_str = resets_at.rsplit('+', 1)
+            reset_time = datetime.fromisoformat(dt_str)
+            # Parse timezone offset
+            if ':' in tz_str:
+                tz_hours, tz_mins = map(int, tz_str.split(':'))
+            else:
+                tz_hours, tz_mins = int(tz_str[:2]), int(tz_str[2:]) if len(tz_str) > 2 else 0
+            tz_offset = timedelta(hours=tz_hours, minutes=tz_mins)
+            # Convert to UTC
+            reset_utc = reset_time - tz_offset
+        elif resets_at.endswith('Z'):
+            reset_utc = datetime.fromisoformat(resets_at.rstrip('Z'))
+        else:
+            reset_utc = datetime.fromisoformat(resets_at)
+
+        # Get current UTC time
+        now_utc = datetime.utcnow()
+
+        # Calculate difference
+        diff = reset_utc - now_utc
+        total_seconds = int(diff.total_seconds())
+
+        if total_seconds <= 0:
+            return ' full'
+
+        days = total_seconds // 86400
+        hours = (total_seconds % 86400) // 3600
+        minutes = (total_seconds % 3600) // 60
+
+        # Format based on duration
+        if days > 0:
+            result = f'{days}d{hours:02d}h'
+        elif hours > 0:
+            result = f'{hours}h{minutes:02d}m'
+        else:
+            result = f'{minutes}m'
+        return result.rjust(5)
+    except Exception:
+        return '  ?  '
 
 
 def get_git_info(cwd: str) -> str:
@@ -403,8 +464,8 @@ def main():
     dur_ms = data.get('cost', {}).get('total_duration_ms', 0)
     ver = data.get('version', '?')
 
-    # Get usage from API
-    five_hour_pct, seven_day_pct = get_usage()
+    # Get usage from API (now includes reset times from Anthropic's API)
+    five_hour_pct, seven_day_pct, five_hour_resets_at, seven_day_resets_at = get_usage()
 
     # Context usage (use total tokens, not just cache_read)
     ctx_pct = min(total_ctx_tokens * 100 // ctx_size, 100) if ctx_size > 0 else 0
@@ -423,9 +484,10 @@ def main():
     cost_fmt = f'${cost:.2f}'
     dur_fmt = format_duration(dur_ms)
     repo_part = get_git_info(cwd)
-    week_remaining = get_week_remaining()
+    # Use actual reset times from Anthropic API (single source of truth)
+    session_remaining = get_time_until_reset(five_hour_resets_at)
+    week_remaining = get_time_until_reset(seven_day_resets_at)
     context_remaining = get_context_time_remaining(ctx_pct, ctx_size)
-    session_remaining = get_session_remaining(five_hour_pct)
 
     # Current time (24-hour format)
     current_time = datetime.now().strftime('%H:%M')
