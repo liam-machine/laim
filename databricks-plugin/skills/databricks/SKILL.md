@@ -168,3 +168,4 @@ result = w.statement_execution.execute_statement(
 - **scripts/** - Executable Python scripts for each operation
 - **references/configuration.md** - Setup and authentication guide
 - **references/cli-reference.md** - CLI command patterns
+- **references/lakeview-dashboards.md** - Lakeview dashboard architecture and patterns

@@ -92,3 +92,17 @@ w.lakeview.publish(dashboard_id="abc123")
 | `trash` | Move dashboard to trash |
 | `-p, --profile` | Databricks profile |
 | `-o, --output` | Format: table, json, csv |
+
+## Dashboard Architecture Reference
+
+For comprehensive documentation on Lakeview dashboard architecture, patterns, and best practices, see:
+
+**[lakeview-dashboards.md](${CLAUDE_PLUGIN_ROOT}/skills/databricks/references/lakeview-dashboards.md)**
+
+Covers:
+- Dashboard structure (pages, datasets, parameters)
+- Dataset patterns (static dropdowns, dynamic dropdowns, dynamic time aggregation)
+- Two-layer aggregation and Transform settings
+- Filter-parameter-dataset flow
+- System tables reference (`system.billing.usage`, `system.query.history`)
+- Account Usage Dashboard reference
