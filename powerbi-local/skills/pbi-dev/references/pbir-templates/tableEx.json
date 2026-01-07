@@ -1,0 +1,171 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "{{VISUAL_NAME}}",
+  "position": {
+    "x": 40,
+    "y": 80,
+    "width": 600,
+    "height": 400,
+    "z": 0,
+    "tabOrder": 0
+  },
+  "visual": {
+    "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualConfiguration/2.2.0/schema.json",
+    "visualType": "tableEx",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "{{TABLE_NAME}}"
+                    }
+                  },
+                  "Property": "{{COLUMN_1}}"
+                }
+              },
+              "queryRef": "{{TABLE_NAME}}.{{COLUMN_1}}",
+              "displayName": "{{COLUMN_1_DISPLAY}}"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "{{TABLE_NAME}}"
+                    }
+                  },
+                  "Property": "{{COLUMN_2}}"
+                }
+              },
+              "queryRef": "{{TABLE_NAME}}.{{COLUMN_2}}",
+              "displayName": "{{COLUMN_2_DISPLAY}}"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "{{MEASURE_TABLE}}"
+                    }
+                  },
+                  "Property": "{{MEASURE_NAME}}"
+                }
+              },
+              "queryRef": "{{MEASURE_TABLE}}.{{MEASURE_NAME}}",
+              "displayName": "{{MEASURE_DISPLAY}}"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "grid": [
+        {
+          "properties": {
+            "gridVertical": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "gridHorizontal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "_comments": {
+    "_description": "PBIR Table (tableEx) Visual Template - displays data in tabular format with columns",
+    "_usage": "Clone this file into your report's pages/[pageName]/visuals/[visualName]/ folder as visual.json",
+    "_placeholders": {
+      "{{VISUAL_NAME}}": "Unique 20-character identifier (e.g., 'tbl_product_sales')",
+      "{{TABLE_NAME}}": "The source table for columns (e.g., 'Products')",
+      "{{COLUMN_1}}": "First column field name (e.g., 'ProductName')",
+      "{{COLUMN_1_DISPLAY}}": "Display name for first column (e.g., 'Product')",
+      "{{COLUMN_2}}": "Second column field name (e.g., 'Category')",
+      "{{COLUMN_2_DISPLAY}}": "Display name for second column (e.g., 'Category')",
+      "{{MEASURE_TABLE}}": "Table containing the measure (e.g., 'Sales')",
+      "{{MEASURE_NAME}}": "Measure for numeric column (e.g., 'Total Sales')",
+      "{{MEASURE_DISPLAY}}": "Display name for measure column (e.g., 'Sales Amount')"
+    },
+    "_position": {
+      "x": "Horizontal position from left edge in pixels",
+      "y": "Vertical position from top edge in pixels",
+      "width": "Visual width in pixels (tables often need 400-800 width)",
+      "height": "Visual height in pixels (adjust based on expected rows)",
+      "z": "Z-order stacking (higher values on top)",
+      "tabOrder": "Keyboard navigation order"
+    },
+    "_queryState_roles": {
+      "Values": "All columns and measures in the table (order determines column order)"
+    },
+    "_objects_formatting": {
+      "grid": "Gridline visibility (vertical/horizontal)",
+      "columnHeaders": "Header row styling (bold, background, font)",
+      "values": "Cell value formatting (word wrap, alignment)",
+      "total": "Show/hide totals row at bottom"
+    },
+    "_tips": {
+      "addColumns": "Add more projection objects to Values array for more columns",
+      "columnOrder": "Projection order in array determines left-to-right column order",
+      "mixTypes": "Can mix Column and Measure field types in same table",
+      "conditionalFormatting": "Add rules objects for data bars, color scales, icons"
+    },
+    "_visualType_alternatives": {
+      "tableEx": "Modern table visual (this template)",
+      "matrix": "Pivot table with row/column hierarchies",
+      "pivotTable": "Alternative pivot table visual"
+    }
+  }
+}

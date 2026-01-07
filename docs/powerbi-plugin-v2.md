@@ -238,12 +238,21 @@ powerbi-local/
 │   │   └── references/
 │   │       ├── tmdl-syntax.md           # TMDL language reference
 │   │       ├── tmdl-examples.md         # Common patterns
-│   │       ├── pbir-schema.md           # PBIR JSON structure
+│   │       ├── pbir-schema.md           # PBIR JSON structure (comprehensive)
 │   │       ├── dax-patterns.md          # DAX best practices
 │   │       ├── dax-time-intelligence.md # Time intel patterns
 │   │       ├── calculation-groups.md    # Calc group syntax
 │   │       ├── rls-patterns.md          # Row-level security
-│   │       └── m-query-basics.md        # Power Query in PBIP
+│   │       ├── m-query-basics.md        # Power Query in PBIP
+│   │       ├── troubleshooting.md       # Common errors and solutions
+│   │       │
+│   │       └── pbir-templates/          # Visual JSON templates
+│   │           ├── clusteredColumnChart.json
+│   │           ├── lineChart.json
+│   │           ├── card.json
+│   │           ├── tableEx.json
+│   │           ├── slicer.json
+│   │           └── pieChart.json
 │   │
 │   └── pbi-test/
 │       ├── SKILL.md
@@ -588,6 +597,58 @@ table Sales
 | Windows only | Power BI Desktop is Windows-only | Use VM if on macOS/Linux |
 | PBIR is preview | GA expected Q3 2026 | Recommended for new projects |
 | Desktop must be open | MCP connects to running instance | Or use TMDL-only mode |
+
+---
+
+## Known Limitations & Warnings
+
+> **Important:** The Microsoft Power BI Modeling MCP is currently in **Public Preview**. Implementation may significantly change prior to GA. Review all generated code before use.
+
+### MCP Server Limitations
+
+| Limitation | Impact | Mitigation |
+|------------|--------|------------|
+| **Public Preview Status** | APIs may change, features may be unstable | Pin to specific version, test thoroughly |
+| **Report Layer Blindness** | MCP cannot modify reports, only semantic models | Use PBIR JSON editing for visuals |
+| **Rename Operations Break Reports** | Using batch_rename_tables/columns breaks visual field references | Avoid renames on models with reports, or manually update PBIR |
+| **No Mac ARM/Silicon Support** | Cannot run natively on Apple Silicon | Use Parallels, VMware Fusion, or Windows 365 |
+| **Authentication Issues** | Fabric workspace connectivity has known AADSTS errors | Check GitHub issues for workarounds |
+
+### DAX Quality Considerations
+
+| Consideration | Details |
+|---------------|---------|
+| **Human Review Required** | All generated DAX should be validated by a human before production use |
+| **Complex DAX Unreliable** | Filter propagation, context transitions, and advanced patterns may have subtle errors |
+| **Time Intelligence Assumptions** | Generated time intelligence assumes properly configured date tables |
+| **Performance Not Guaranteed** | Generated DAX may not be optimized; review with DAX Studio |
+
+### PBIR Visual Creation Limitations
+
+| Limitation | Details |
+|------------|---------|
+| **No MCP Tools for Reports** | Visuals must be created via direct JSON file editing |
+| **Schema Complexity** | PBIR visual.json has complex, partially-documented schema |
+| **No Live Feedback** | Changes require Power BI Desktop refresh to see results |
+| **Template Approach Recommended** | Generate visuals by cloning templates, not from scratch |
+
+### Known GitHub Issues (as of January 2026)
+
+| Category | Issue Examples |
+|----------|----------------|
+| Authentication | Token generation failures, AADSTS500113 errors with Fabric |
+| Platform | No Mac ARM support, admin rights required on some systems |
+| Connection | Chinese character filename failures, SSAS parsing issues |
+| Integration | Tools not visible in some clients, MCP discovery issues |
+
+### Best Practices
+
+1. **Always back up** your PBIP folder before making MCP-driven changes
+2. **Never use batch rename** operations on models with existing reports
+3. **Review all generated DAX** - treat it as a starting point, not final code
+4. **Use version control** - PBIP format is Git-friendly, commit frequently
+5. **Test incrementally** - verify each change before making the next
+6. **Use TMDL-only mode** for semantic model work when possible (more stable)
 
 ---
 

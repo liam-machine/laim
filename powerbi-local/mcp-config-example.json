@@ -1,0 +1,56 @@
+{
+  "_comment": "Example MCP configurations for Power BI plugin. Copy relevant sections to your .mcp.json or ~/.claude.json",
+
+  "configurations": {
+    "desktop": {
+      "_description": "Connect to running Power BI Desktop instance",
+      "mcpServers": {
+        "powerbi": {
+          "command": "npx",
+          "args": ["-y", "@microsoft/powerbi-modeling-mcp@latest"],
+          "description": "Power BI semantic model operations via local Desktop"
+        }
+      }
+    },
+
+    "tmdl-only": {
+      "_description": "Edit TMDL files directly without Power BI Desktop",
+      "mcpServers": {
+        "powerbi-tmdl": {
+          "command": "npx",
+          "args": [
+            "-y", "@microsoft/powerbi-modeling-mcp@latest",
+            "--mode", "tmdl",
+            "--path", "./MyReport.SemanticModel"
+          ],
+          "description": "Direct TMDL folder editing"
+        }
+      }
+    },
+
+    "fabric": {
+      "_description": "Connect to Fabric workspace (requires authentication)",
+      "mcpServers": {
+        "powerbi-fabric": {
+          "command": "npx",
+          "args": [
+            "-y", "@microsoft/powerbi-modeling-mcp@latest",
+            "--mode", "fabric",
+            "--workspace", "YOUR_WORKSPACE_ID"
+          ],
+          "description": "Power BI Fabric workspace connection"
+        }
+      }
+    }
+  },
+
+  "recommended": {
+    "_description": "Recommended configuration for most users",
+    "mcpServers": {
+      "powerbi": {
+        "command": "npx",
+        "args": ["-y", "@microsoft/powerbi-modeling-mcp@latest"]
+      }
+    }
+  }
+}

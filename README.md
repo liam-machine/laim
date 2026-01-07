@@ -66,6 +66,11 @@ laim/
 │   └── commands/
 │       └── next-feature.md            # /next-feature slash command
 │
+├── powerbi-local/
+│   └── skills/
+│       ├── pbi-dev/                   # Power BI development (TMDL, PBIR, DAX)
+│       └── pbi-test/                  # Feature testing and verification
+│
 └── statusline-plugin/
     └── hooks/                         # Rich status line (no skills, hooks only)
 ```
@@ -73,6 +78,7 @@ laim/
 | Plugin | Skills | Category |
 |--------|--------|----------|
 | **databricks** | `databricks` + 13 commands | Data Engineering |
+| **powerbi-local** | `pbi-dev`, `pbi-test` | Data Engineering |
 | **people** | `messaging`, `github-collaborator` | Productivity |
 | **manim-web** | `manim-web` | Creative |
 | **repo-creator** | `repo` | Productivity |
@@ -140,6 +146,71 @@ python3 ${CLAUDE_PLUGIN_ROOT}/skills/databricks/scripts/db_catalog.py tables mai
 ```
 
 See [configuration guide](databricks-plugin/skills/databricks/references/configuration.md) for setup.
+
+</details>
+
+<details>
+<summary><strong>powerbi-local</strong> - Power BI development with Microsoft MCP and Claude computer use</summary>
+
+### powerbi-local
+
+Local Power BI development using Microsoft's official MCP server and Claude's computer use capabilities. Edit semantic models (TMDL), create reports (PBIR), execute DAX queries, and verify features visually.
+
+| Feature | Description |
+|---------|-------------|
+| Semantic Model | Edit tables, measures, columns, relationships via TMDL |
+| Reports | Create/edit visuals, pages via PBIR JSON with templates |
+| DAX Queries | Execute queries via MCP, test measures |
+| Computer Use | Screenshot reports, click slicers, verify visuals |
+| Testing | Automated verification of measures, relationships, visuals |
+
+**Skills included:**
+- `pbi-dev` — Power BI development (TMDL, PBIR, DAX patterns)
+- `pbi-test` — Feature testing and verification
+
+**Commands:**
+- `/pbi` — Power BI development assistance
+- `/pbi-test` — Test and verify Power BI features
+
+**Quick Start:**
+
+1. Install the Power BI MCP server:
+```bash
+npm install -g @microsoft/powerbi-modeling-mcp
+```
+
+2. Configure MCP in `.mcp.json`:
+```json
+{
+  "mcpServers": {
+    "powerbi": {
+      "command": "npx",
+      "args": ["-y", "@microsoft/powerbi-modeling-mcp@latest"]
+    }
+  }
+}
+```
+
+3. Enable PBIP format in Power BI Desktop:
+   - File → Options → Preview Features
+   - Enable "Power BI Project (.pbip) save option"
+   - Enable "Store semantic model in TMDL format"
+
+4. Ask Claude:
+```
+"Add a YoY Growth measure to the Sales table"
+"Create a bar chart showing sales by region"
+"Test if my new measure works correctly"
+"Add a relationship between Products and Sales"
+```
+
+**Requirements:**
+- Windows 10/11 (Power BI Desktop is Windows-only)
+- Power BI Desktop (non-Store version recommended)
+- Node.js 18+
+- Claude Code with computer use enabled
+
+See [architecture documentation](docs/powerbi-plugin-v2.md) for details.
 
 </details>
 

@@ -1,0 +1,153 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "{{VISUAL_NAME}}",
+  "position": {
+    "x": 20,
+    "y": 20,
+    "width": 180,
+    "height": 400,
+    "z": 0,
+    "tabOrder": 0
+  },
+  "visual": {
+    "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualConfiguration/2.2.0/schema.json",
+    "visualType": "slicer",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "{{TABLE_NAME}}"
+                    }
+                  },
+                  "Property": "{{SLICER_COLUMN}}"
+                }
+              },
+              "queryRef": "{{TABLE_NAME}}.{{SLICER_COLUMN}}",
+              "displayName": "{{SLICER_DISPLAY_NAME}}"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "data": [
+        {
+          "properties": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Basic'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "selection": [
+        {
+          "properties": {
+            "selectAllCheckboxEnabled": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "singleSelect": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "header": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "items": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#333333'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "syncGroup": null
+  },
+  "_comments": {
+    "_description": "PBIR Slicer Visual Template - filter control for report interactivity",
+    "_usage": "Clone this file into your report's pages/[pageName]/visuals/[visualName]/ folder as visual.json",
+    "_placeholders": {
+      "{{VISUAL_NAME}}": "Unique 20-character identifier (e.g., 'slc_category_filter')",
+      "{{TABLE_NAME}}": "The table containing the filter column (e.g., 'Products')",
+      "{{SLICER_COLUMN}}": "The column to filter by (e.g., 'Category')",
+      "{{SLICER_DISPLAY_NAME}}": "Header label for the slicer (e.g., 'Product Category')"
+    },
+    "_position": {
+      "x": "Horizontal position from left edge in pixels",
+      "y": "Vertical position from top edge in pixels",
+      "width": "Visual width in pixels (slicers are typically 150-250 wide)",
+      "height": "Visual height in pixels (vertical list needs more height)",
+      "z": "Z-order stacking (higher values on top)",
+      "tabOrder": "Keyboard navigation order"
+    },
+    "_queryState_roles": {
+      "Values": "The field to create filter options from"
+    },
+    "_objects_formatting": {
+      "data": {
+        "mode": "Display mode - 'Basic' (list), 'Dropdown', 'Between', 'Before', 'After'"
+      },
+      "selection": {
+        "selectAllCheckboxEnabled": "Show 'Select All' option",
+        "singleSelect": "true = single selection only, false = multi-select"
+      },
+      "header": "Slicer title/header display settings",
+      "items": "Individual slicer item formatting (font, color, size)"
+    },
+    "_slicer_modes": {
+      "Basic": "Vertical list with checkboxes (default)",
+      "Dropdown": "Compact dropdown menu",
+      "Between": "Range selector (for dates/numbers)",
+      "Before": "Less than/before filter",
+      "After": "Greater than/after filter"
+    },
+    "_syncGroup": {
+      "_description": "Set syncGroup to sync slicers across pages",
+      "_example": "Use same syncGroup name on slicers to sync selections"
+    },
+    "_tips": {
+      "dateSlicers": "Use Between mode for date range filtering",
+      "horizontalLayout": "Reduce height, increase width for horizontal chip layout",
+      "performance": "Use slicers on dimension tables, not fact tables"
+    }
+  }
+}
