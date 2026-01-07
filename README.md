@@ -390,6 +390,10 @@ Slash command that reads features.json and implements the next feature using the
 
 </details>
 
+## Documentation
+
+- **[Power BI Local Development](docs/powerbi-plugin-v2.md)** - Architecture for local Power BI development with Claude Code using Microsoft MCP and computer use
+
 ## License
 
 MIT
