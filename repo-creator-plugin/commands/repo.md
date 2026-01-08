@@ -1,20 +1,11 @@
 ---
-name: repo
-description: Create a new repository, publish to GitHub, and optionally set up a virtual environment (user)
+description: Create a new repository and publish to GitHub
+argument-hint: <repo-name> [org]
 ---
 
 # Repository Creator
 
 Create repositories with a guided workflow: initialize git, publish to GitHub (personal or organization), and optionally set up a development environment (venv, conda, or npm).
-
-## Invocation
-
-The user invokes this skill with `/repo`:
-
-```
-/repo <repo-name>        # Personal repository
-/repo <repo-name> org    # Organization repository
-```
 
 **Arguments:**
 - `$1` = Repository name (required)
@@ -73,7 +64,7 @@ Verify GitHub CLI is installed and authenticated:
 
 ```bash
 # Check installation
-bash ${CLAUDE_PLUGIN_ROOT}/skills/repo/scripts/ensure-gh-cli.sh
+which gh && gh --version
 ```
 
 If `gh` is not found:
@@ -204,15 +195,3 @@ Confirm to the user:
 - **Directory exists:** Ask for a different name
 - **GitHub publishing fails:** Show error, offer retry or skip
 - **venv creation fails:** Show error, continue without it
-
-## Configuration
-
-See @references/configuration.md for details on the config file format and customization options.
-
-## Scripts
-
-| Script | Purpose |
-|--------|---------|
-| `ensure-gh-cli.sh` | Check/install GitHub CLI and verify authentication |
-
-Script location: `${CLAUDE_PLUGIN_ROOT}/skills/repo/scripts/`
