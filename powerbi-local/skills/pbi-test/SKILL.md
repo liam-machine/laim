@@ -3,13 +3,142 @@ name: pbi-test
 description: >
   Verify that newly developed Power BI features work as expected.
   Triggers on "test measure", "verify calculation", "check visual",
-  "does this work", "test relationship", "validate DAX", "is it correct".
+  "does this work", "test relationship", "validate DAX", "is it correct",
+  "validate power bi", "open pbip", "test my changes".
 auto_trigger: true
 ---
 
 # Power BI Testing
 
 Verify Power BI measures, visuals, relationships, and calculations work as expected.
+
+## Automated Validation Loop
+
+**IMPORTANT**: When Claude makes changes to Power BI files, use this automated loop to validate and self-correct until the report works correctly.
+
+### Step 0: Pre-Validation (BEFORE opening Power BI Desktop)
+
+**Always run pre-validation first - it's much faster than visual validation!**
+
+```
+PRE-VALIDATION CHECKS:
+
+1. TMDL VALIDATION
+   └─ Use MCP: validate_tmdl
+   └─ Fix any syntax errors before proceeding
+
+2. DAX TESTING (for each new/modified measure)
+   └─ Use MCP execute_dax: EVALUATE ROW("Test", [MeasureName])
+   └─ If error: fix DAX syntax in TMDL file, re-test
+   └─ If BLANK unexpectedly: check filter context
+
+3. RELATIONSHIP TESTING (for new/modified relationships)
+   └─ Use MCP execute_dax: EVALUATE SUMMARIZECOLUMNS(Dim[Col], "Val", [Measure])
+   └─ Verify data flows correctly across relationship
+
+4. JSON VALIDATION (for new/modified visuals)
+   └─ Read visual.json file
+   └─ Check: valid JSON syntax, Entity/Property match model
+   └─ Verify queryRef format: "TableName.MeasureName"
+
+SELF-CORRECTION LOOP (Pre-validation):
+   WHILE pre-validation errors exist:
+       ├─ Identify error from MCP response
+       ├─ Fix the source file (TMDL or JSON)
+       ├─ Re-run the validation check
+       └─ Continue until all checks pass
+
+ONLY proceed to Step 1 when ALL pre-validation checks pass.
+```
+
+### Step 1: Open the PBIP File
+
+Use computer use to open the .pbip file in Power BI Desktop:
+
+```
+1. Use computer use to find and double-click the .pbip file in File Explorer
+   - Or use keyboard: Win+R, type the full path to the .pbip file, press Enter
+   - Or if Power BI Desktop is open: Ctrl+O, navigate to file, open
+
+2. Wait for Power BI Desktop to fully load (watch for loading indicators to disappear)
+   - Take a screenshot to confirm the report is loaded
+   - Look for: Report canvas visible, no spinning loaders, no error dialogs
+```
+
+### Step 2: Capture Baseline Screenshot
+
+```
+1. Navigate to the page containing your changes
+   - Use Page Navigator pane or click page tabs at bottom
+
+2. Click on empty canvas area to deselect any visual
+
+3. Take screenshot using computer use
+
+4. Analyze the screenshot for:
+   - [ ] Report loaded successfully (no error banners)
+   - [ ] Visuals render without error icons
+   - [ ] Data appears in visuals (not empty/blank)
+   - [ ] No "Unable to load" or "Error" messages
+   - [ ] Formatting looks correct
+```
+
+### Step 3: Identify Issues
+
+After taking a screenshot, analyze for these common issues:
+
+| Visual Indicator | Issue | Likely Cause |
+|------------------|-------|--------------|
+| Red X icon on visual | Visual error | Invalid field reference, DAX error |
+| Yellow warning triangle | Data warning | Missing data, relationship issue |
+| Empty visual (no data) | No data returned | Filter too restrictive, wrong field |
+| "Error" text | Calculation error | DAX syntax error, circular dependency |
+| Broken layout | JSON error | Invalid PBIR visual.json |
+| Missing visual | Visual not created | File not saved, JSON missing |
+
+### Step 4: Self-Correction Loop
+
+**If issues are found, iterate until fixed:**
+
+```
+REPEAT:
+    1. IDENTIFY the specific error from screenshot
+
+    2. DIAGNOSE root cause:
+       - If DAX error: Check measure syntax in TMDL file
+       - If visual error: Check visual.json structure
+       - If data missing: Check relationships and filters
+       - If layout broken: Validate JSON against schema
+
+    3. FIX the issue:
+       - Edit the relevant TMDL or JSON file
+       - Save the file
+
+    4. REFRESH in Power BI Desktop:
+       - Computer use: Click "Refresh" button in ribbon
+       - Or: Press Ctrl+Shift+R (refresh all)
+       - Or: For model changes, close and reopen .pbip
+
+    5. SCREENSHOT again to verify fix
+
+    6. ANALYZE new screenshot:
+       - If issue persists: Go to step 2, try different fix
+       - If new issue appears: Add to fix list, continue
+       - If all issues resolved: Exit loop, report success
+
+UNTIL: All visuals render correctly with expected data
+```
+
+### Step 5: Final Validation
+
+Once visuals look correct, perform data validation:
+
+```
+1. Use MCP execute_dax to query the measure values
+2. Compare DAX results to values shown in screenshot
+3. If values match: Validation complete
+4. If values differ: Investigate filter context differences
+```
 
 ## Testing Methods
 
@@ -20,6 +149,7 @@ Verify Power BI measures, visuals, relationships, and calculations work as expec
 | Relationship testing | DAX filter propagation queries | Verify relationships work |
 | RLS testing | MCP `execute_dax` with USERPRINCIPALNAME | Test security roles |
 | Cross-validation | Compare to expected values | Validate against known data |
+| **Full validation** | **Automated loop (above)** | **After any Claude changes** |
 
 ## Testing Measures
 
@@ -306,3 +436,173 @@ Use computer use to take screenshot of Power BI Desktop
 ```
 Use MCP execute_dax: EVALUATE SUMMARIZECOLUMNS(DimTable[Column], "Value", [Measure])
 ```
+
+---
+
+## Complete Validation Workflow
+
+**Use this workflow after making ANY changes to Power BI files to automatically validate and self-correct.**
+
+### Prerequisites
+
+- Power BI Desktop installed on Windows
+- Computer use capability enabled
+- PBIP file path known
+
+### Full Automated Workflow
+
+```
+WORKFLOW: validate_powerbi_changes
+
+INPUT: pbip_file_path (path to .pbip file)
+INPUT: changes_made (list of files/items changed)
+
+0. PRE-VALIDATION (Fast - no Power BI Desktop needed)
+   ├─ For TMDL changes:
+   │   ├─ Use MCP: validate_tmdl
+   │   └─ LOOP: Fix errors → re-validate → until clean
+   │
+   ├─ For measure changes:
+   │   ├─ Use MCP execute_dax: EVALUATE ROW("Test", [MeasureName])
+   │   └─ LOOP: Fix DAX → re-test → until works
+   │
+   ├─ For relationship changes:
+   │   ├─ Use MCP execute_dax with cross-table query
+   │   └─ LOOP: Fix relationship → re-test → until works
+   │
+   ├─ For visual JSON changes:
+   │   ├─ Read and validate JSON syntax
+   │   ├─ Verify Entity/Property match model
+   │   └─ LOOP: Fix JSON → re-read → until valid
+   │
+   └─ GATE: All pre-validation must pass before proceeding
+           If stuck after 5 attempts, report to user
+
+1. OPEN POWER BI FILE (Only after pre-validation passes)
+   ├─ Use computer use: screenshot current desktop state
+   ├─ Locate .pbip file:
+   │   └─ computer_use: Win+E to open Explorer
+   │   └─ computer_use: navigate to pbip_file_path
+   │   └─ computer_use: double-click the .pbip file
+   ├─ Wait for Power BI Desktop to launch
+   │   └─ computer_use: screenshot every 3-5 seconds
+   │   └─ Check for: Power BI window visible, loading complete
+   └─ Confirm loaded:
+       └─ computer_use: screenshot
+       └─ Verify: Report canvas visible, no error dialogs
+
+2. NAVIGATE TO CHANGED CONTENT
+   ├─ For each page with changes:
+   │   └─ computer_use: click page tab or use Page Navigator
+   │   └─ computer_use: screenshot the page
+   └─ For model changes (measures, relationships):
+       └─ computer_use: open Model view (click Model icon in left sidebar)
+       └─ computer_use: screenshot to verify structure
+
+3. CAPTURE AND ANALYZE
+   ├─ computer_use: screenshot current view
+   ├─ Analyze screenshot for errors:
+   │   ├─ Red X icons = Visual errors
+   │   ├─ Yellow triangles = Warnings
+   │   ├─ Empty visuals = No data
+   │   ├─ Error dialogs = Fatal errors
+   │   └─ Broken layout = JSON issues
+   └─ Record all issues found
+
+4. SELF-CORRECTION LOOP
+   ├─ WHILE issues exist:
+   │   │
+   │   ├─ For EACH issue:
+   │   │   ├─ Diagnose: Read relevant file (TMDL/JSON)
+   │   │   ├─ Fix: Edit the file to correct the issue
+   │   │   └─ Save: Write the corrected file
+   │   │
+   │   ├─ Refresh Power BI:
+   │   │   ├─ If TMDL change:
+   │   │   │   └─ computer_use: Ctrl+Shift+R (refresh)
+   │   │   │   └─ OR: Close and reopen .pbip for model changes
+   │   │   └─ If JSON change:
+   │   │       └─ computer_use: Ctrl+Shift+R (refresh)
+   │   │
+   │   ├─ Wait for refresh complete:
+   │   │   └─ computer_use: screenshot to check loading state
+   │   │
+   │   ├─ Re-analyze:
+   │   │   └─ computer_use: screenshot
+   │   │   └─ Check if issues resolved
+   │   │   └─ Check for NEW issues introduced
+   │   │
+   │   └─ Update issue list
+   │
+   └─ EXIT when: No errors visible in screenshot
+
+5. DATA VALIDATION
+   ├─ For each measure changed:
+   │   ├─ Use MCP execute_dax to query measure value
+   │   ├─ Compare to value shown in visual (from screenshot)
+   │   └─ If mismatch: investigate filter context
+   └─ For relationships:
+       └─ Use MCP execute_dax with cross-table query to verify
+
+6. FINAL CONFIRMATION
+   ├─ computer_use: screenshot full report
+   ├─ Verify all visuals render correctly
+   ├─ Report validation status to user:
+   │   ├─ SUCCESS: All changes validated, report works correctly
+   │   └─ PARTIAL: Some issues remain (list them)
+   └─ Provide summary of iterations and fixes made
+
+OUTPUT: validation_result (success/partial/failed)
+OUTPUT: fixes_applied (list of corrections made)
+OUTPUT: final_screenshot (proof of working state)
+```
+
+### Quick Validation Commands
+
+**Validate after measure change:**
+```
+1. Open pbip file using computer use
+2. Screenshot the visual using the measure
+3. Run: MCP execute_dax: EVALUATE ROW("Result", [ChangedMeasure])
+4. Compare screenshot value to DAX result
+```
+
+**Validate after visual change:**
+```
+1. Open pbip file using computer use
+2. Navigate to page with visual
+3. Screenshot and verify:
+   - Visual renders (no error icon)
+   - Data appears correctly
+   - Formatting matches expectation
+```
+
+**Validate after relationship change:**
+```
+1. Open pbip file using computer use
+2. Open Model view, screenshot to verify relationship line exists
+3. Run: MCP execute_dax: EVALUATE SUMMARIZECOLUMNS(Dim[Col], "Value", [Measure])
+4. Verify filter propagation works
+```
+
+### Computer Use Actions Reference
+
+| Action | How to Perform |
+|--------|----------------|
+| Open file | Win+E, navigate, double-click |
+| Refresh report | Ctrl+Shift+R |
+| Switch page | Click page tab at bottom |
+| Open Model view | Click Model icon in left sidebar |
+| Take screenshot | Use computer use screenshot capability |
+| Click visual | computer_use: mouse_move + click |
+| Open file dialog | Ctrl+O |
+| Close report | Ctrl+W |
+| Save changes | Ctrl+S |
+
+### Max Iterations
+
+To prevent infinite loops, limit self-correction to **5 iterations**. If issues persist after 5 attempts:
+
+1. Report the remaining issues to the user
+2. Provide diagnostic information (screenshots, error messages)
+3. Ask for user guidance on how to proceed

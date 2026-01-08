@@ -1,6 +1,6 @@
 ---
-description: Test and verify Power BI features
-argument-hint: "[measure/visual/relationship to test]"
+description: Test and verify Power BI features with automated validation
+argument-hint: "[validate <path.pbip>] or [measure/visual to test]"
 skill: pbi-test
 ---
 
@@ -8,7 +8,22 @@ skill: pbi-test
 
 Verify that Power BI measures, visuals, and relationships work correctly.
 
-## Testing Workflow
+## Automated Validation (Recommended)
+
+**To run full automated validation after making changes:**
+
+```
+/pbi:test validate path/to/report.pbip
+```
+
+This will:
+1. Open the .pbip file in Power BI Desktop using computer use
+2. Take screenshots to verify visuals render correctly
+3. Automatically detect and fix any errors
+4. Iterate until all issues are resolved (max 5 attempts)
+5. Validate data with DAX queries
+
+## Manual Testing Workflow
 
 1. **Identify what to test** (measure, visual, relationship)
 2. **Choose test method** (DAX query or screenshot)

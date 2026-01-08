@@ -224,6 +224,112 @@ Load these for detailed guidance:
 2. **Validate before loading**: Use `validate_tmdl` after file edits
 3. **Test measures**: Use `execute_dax` to verify calculations
 
+---
+
+## Pre-Validation Workflow (IMPORTANT)
+
+**ALWAYS run pre-validation before opening Power BI Desktop.** This catches most errors instantly without needing to launch the application.
+
+### Pre-Validation Checklist
+
+Run these checks AFTER making any changes, BEFORE opening .pbip in Power BI Desktop:
+
+```
+PRE-VALIDATION WORKFLOW:
+
+1. TMDL SYNTAX VALIDATION
+   ├─ Use MCP: validate_tmdl
+   ├─ Check for: syntax errors, invalid references, missing lineageTags
+   └─ Fix any errors before proceeding
+
+2. DAX MEASURE VALIDATION (for new/modified measures)
+   ├─ Use MCP: execute_dax with EVALUATE ROW("Test", [MeasureName])
+   ├─ Check for: DAX errors, unexpected BLANK, division errors
+   └─ Test with filter context if measure uses CALCULATE
+
+3. RELATIONSHIP VALIDATION (for new/modified relationships)
+   ├─ Use MCP: execute_dax with cross-table query
+   │   EVALUATE SUMMARIZECOLUMNS(Dim[Column], "Value", [Measure])
+   ├─ Check for: ambiguous relationships, missing data
+   └─ Verify filter propagation direction
+
+4. PBIR JSON VALIDATION (for new/modified visuals)
+   ├─ Read the visual.json file
+   ├─ Validate JSON syntax (no trailing commas, proper brackets)
+   ├─ Check field references match model exactly:
+   │   - Entity must match table name
+   │   - Property must match measure/column name
+   │   - queryRef must be "Entity.Property" format
+   └─ Verify required fields exist (name, position, visual type)
+
+5. FILE STRUCTURE VALIDATION
+   ├─ Verify folder structure is correct
+   ├─ Check file encoding (UTF-8)
+   └─ Ensure no duplicate lineageTags
+
+ONLY AFTER ALL CHECKS PASS → Open .pbip in Power BI Desktop
+```
+
+### Quick Pre-Validation Commands
+
+**Validate TMDL syntax:**
+```
+Use MCP: validate_tmdl
+```
+
+**Test a measure:**
+```
+Use MCP execute_dax:
+EVALUATE ROW("Result", [YourMeasure])
+```
+
+**Test measure with filters:**
+```
+Use MCP execute_dax:
+EVALUATE CALCULATETABLE(ROW("Result", [YourMeasure]), Table[Column] = "Value")
+```
+
+**Test relationship:**
+```
+Use MCP execute_dax:
+EVALUATE SUMMARIZECOLUMNS(DimTable[Key], "FactCount", COUNTROWS(FactTable))
+```
+
+**Validate JSON visuals (read and check):**
+```
+Read visual.json, verify:
+- Valid JSON syntax
+- "Entity" matches table name exactly
+- "Property" matches measure name exactly
+- All required visual properties present
+```
+
+### Pre-Validation Error Reference
+
+| Error Type | How to Detect | Quick Fix |
+|------------|---------------|-----------|
+| TMDL syntax error | `validate_tmdl` fails | Check indentation, quotes, keywords |
+| DAX error | `execute_dax` returns error | Check DAX syntax, column references |
+| Missing lineageTag | `validate_tmdl` warns | Add `lineageTag: generate-guid` |
+| Invalid relationship | Cross-table query fails | Check column names, cardinality |
+| JSON syntax error | JSON parse fails | Check commas, brackets, quotes |
+| Field reference error | Won't catch until PBI opens | Match Entity/Property to model exactly |
+| Circular dependency | `execute_dax` error | Trace measure dependencies |
+
+### When Pre-Validation Isn't Enough
+
+Some issues can ONLY be detected by opening Power BI Desktop:
+
+- Visual rendering/layout issues
+- Theme and formatting appearance
+- Cross-filtering interactions
+- Custom visual compatibility
+- Mobile layout rendering
+
+For these, use the full validation workflow in `pbi-test` skill after pre-validation passes.
+
+---
+
 ## Known Limitations
 
 ### Power BI Desktop Requirements
