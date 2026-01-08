@@ -2,8 +2,24 @@
   "_comment": "Example MCP configurations for Power BI plugin. Copy relevant sections to your .mcp.json or ~/.claude.json",
 
   "configurations": {
+    "desktop-with-computer-use": {
+      "_description": "RECOMMENDED: Power BI Desktop + Computer Use for full validation loop",
+      "mcpServers": {
+        "powerbi": {
+          "command": "npx",
+          "args": ["-y", "@microsoft/powerbi-modeling-mcp@latest"],
+          "description": "Power BI semantic model operations via local Desktop"
+        },
+        "computer-control": {
+          "command": "uvx",
+          "args": ["computer-control-mcp@latest"],
+          "description": "Desktop automation: screenshots, mouse, keyboard, OCR, window management"
+        }
+      }
+    },
+
     "desktop": {
-      "_description": "Connect to running Power BI Desktop instance",
+      "_description": "Connect to running Power BI Desktop instance (no computer use)",
       "mcpServers": {
         "powerbi": {
           "command": "npx",
@@ -45,12 +61,24 @@
   },
 
   "recommended": {
-    "_description": "Recommended configuration for most users",
+    "_description": "Recommended configuration for full Power BI development with automated validation",
     "mcpServers": {
       "powerbi": {
         "command": "npx",
         "args": ["-y", "@microsoft/powerbi-modeling-mcp@latest"]
+      },
+      "computer-control": {
+        "command": "uvx",
+        "args": ["computer-control-mcp@latest"]
       }
     }
+  },
+
+  "quick-install": {
+    "_description": "Run these commands to add MCP servers to Claude Code",
+    "commands": [
+      "claude mcp add powerbi -- npx -y @microsoft/powerbi-modeling-mcp@latest",
+      "claude mcp add computer-control -- uvx computer-control-mcp@latest"
+    ]
   }
 }

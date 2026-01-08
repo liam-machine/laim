@@ -587,17 +587,36 @@ OUTPUT: final_screenshot (proof of working state)
 
 ### Computer Use Actions Reference
 
-| Action | How to Perform |
-|--------|----------------|
-| Open file | Win+E, navigate, double-click |
-| Refresh report | Ctrl+Shift+R |
-| Switch page | Click page tab at bottom |
-| Open Model view | Click Model icon in left sidebar |
-| Take screenshot | Use computer use screenshot capability |
-| Click visual | computer_use: mouse_move + click |
-| Open file dialog | Ctrl+O |
-| Close report | Ctrl+W |
-| Save changes | Ctrl+S |
+**Requires `computer-control` MCP server. Install with:**
+```bash
+claude mcp add computer-control -- uvx computer-control-mcp@latest
+```
+
+| Action | MCP Tool | Example |
+|--------|----------|---------|
+| Take screenshot | `screenshot` | Capture current screen state |
+| Move mouse | `mouse_move` | Move to coordinates (x, y) |
+| Click | `mouse_click` | Click at current position |
+| Double-click | `mouse_double_click` | Open files |
+| Type text | `type_text` | Enter file paths, text |
+| Press key | `press_key` | Ctrl+O, Ctrl+S, Enter |
+| Key combo | `hotkey` | Ctrl+Shift+R (refresh) |
+| Get window list | `get_windows` | Find Power BI Desktop |
+| Focus window | `focus_window` | Bring window to front |
+| OCR screen | `ocr` | Read text from screenshot |
+
+### Example Computer Use Sequence
+
+```
+1. screenshot                     # See current state
+2. get_windows                    # Find "Power BI Desktop" window
+3. focus_window "Power BI"        # Bring to front
+4. hotkey ["ctrl", "o"]           # Open file dialog
+5. type_text "C:\path\to\report.pbip"
+6. press_key "enter"              # Open file
+7. screenshot                     # Wait and verify loaded
+8. ocr                            # Read any error messages
+```
 
 ### Max Iterations
 
