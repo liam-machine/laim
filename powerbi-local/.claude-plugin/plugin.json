@@ -5,29 +5,6 @@
   "author": {
     "name": "Liam Wynne"
   },
-  "license": "MIT",
-  "keywords": [
-    "power-bi",
-    "powerbi",
-    "dax",
-    "tmdl",
-    "pbir",
-    "semantic-model",
-    "business-intelligence",
-    "data-modeling"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/liam-machine/laim"
-  },
-  "engines": {
-    "claude-code": ">=1.0.0"
-  },
-  "skills": [
-    "pbi-dev",
-    "pbi-test"
-  ],
-  "dependencies": {
-    "mcp": ["@microsoft/powerbi-modeling-mcp"]
-  }
+  "repository": "https://github.com/liam-machine/laim",
+  "license": "MIT"
 }
