@@ -80,6 +80,8 @@ contacts:
     relationship: "Personal friend and 3CC collaborator"
     github: cdaghl
     platforms:
+      email:
+        address: "christine.eldaghl@gmail.com"
       whatsapp:
         phone: "+61410770573"
       imessage:
