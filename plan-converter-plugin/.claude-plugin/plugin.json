@@ -1,0 +1,10 @@
+{
+  "name": "plan-converter",
+  "version": "1.0.0",
+  "description": "Convert plan.md files into features.json for use with the feature-dev agent and /next-feature command",
+  "author": {
+    "name": "Liam Wynne"
+  },
+  "license": "MIT",
+  "keywords": ["plan", "features", "feature-dev", "conversion", "workflow", "automation", "project-planning"]
+}

@@ -66,6 +66,10 @@ laim/
 │   └── commands/
 │       └── next-feature.md            # /next-feature slash command
 │
+├── plan-converter-plugin/
+│   └── skills/
+│       └── plan-converter             # Convert plan.md → features.json
+│
 ├── powerbi-local/
 │   └── skills/
 │       ├── pbi-dev/                   # Power BI development (TMDL, PBIR, DAX)
@@ -84,6 +88,7 @@ laim/
 | **repo-creator** | `repo` | Productivity |
 | **ssh-pi** | `ssh-pi` | Productivity |
 | **next-feature** | `/next-feature` *(command)* | Productivity |
+| **plan-converter** | `plan-converter` | Productivity |
 | **statusline** | *(hooks only)* | Productivity |
 
 ## Skills
@@ -433,6 +438,32 @@ ${CLAUDE_PLUGIN_ROOT}/skills/ssh-pi/scripts/pi-exec.sh info
 ```
 
 See [configuration guide](ssh-pi/skills/ssh-pi/references/configuration.md) for SSH setup.
+
+</details>
+
+<details>
+<summary><strong>plan-converter</strong> - Convert plan.md into features.json for feature-dev</summary>
+
+### plan-converter
+
+Converts a project plan (plan.md) into a structured features.json file compatible with the feature-dev agent and `/next-feature` command.
+
+| Feature | Description |
+|---------|-------------|
+| Platform Detection | Auto-detects iOS/Android/Web from tech stack to generate appropriate validation criteria |
+| Phase-Based IDs | 100-based spacing (Phase 1: F100–F199) so new features can be inserted without renumbering |
+| Validation Criteria | Chrome, iOS Simulator, or Android Emulator verification steps per platform |
+| Skip Support | Marks optional/stretch-goal features as skippable |
+| Implementation Notes | Preserves architecture decisions, constraints, and context from the plan |
+
+**Quick Start:**
+```
+"Convert plan.md to features.json"
+"Generate features.json from my plan"
+"Turn my plan into features for feature-dev"
+```
+
+See [schema reference](plan-converter-plugin/skills/plan-converter/references/schema.md) for the complete features.json structure.
 
 </details>
 
