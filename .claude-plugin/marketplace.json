@@ -120,7 +120,7 @@
     {
       "name": "plan-converter",
       "source": "./plan-converter-plugin",
-      "description": "Convert plan.md files into features.json for feature-dev agent and /next-feature workflow",
+      "description": "Convert plan.md to features.json and implement features with /next-feature — auto-selects, validates, commits, and reports progress",
       "version": "1.0.0",
       "author": {
         "name": "Liam Wynne"

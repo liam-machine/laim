@@ -67,8 +67,10 @@ laim/
 │       └── next-feature.md            # /next-feature slash command
 │
 ├── plan-converter-plugin/
-│   └── skills/
-│       └── plan-converter             # Convert plan.md → features.json
+│   ├── skills/
+│   │   └── plan-converter             # Convert plan.md → features.json
+│   └── commands/
+│       └── next-feature.md            # /next-feature slash command
 │
 ├── powerbi-local/
 │   └── skills/
@@ -88,7 +90,7 @@ laim/
 | **repo-creator** | `repo` | Productivity |
 | **ssh-pi** | `ssh-pi` | Productivity |
 | **next-feature** | `/next-feature` *(command)* | Productivity |
-| **plan-converter** | `plan-converter` | Productivity |
+| **plan-converter** | `plan-converter` + `/next-feature` | Productivity |
 | **statusline** | *(hooks only)* | Productivity |
 
 ## Skills
@@ -442,25 +444,37 @@ See [configuration guide](ssh-pi/skills/ssh-pi/references/configuration.md) for 
 </details>
 
 <details>
-<summary><strong>plan-converter</strong> - Convert plan.md into features.json for feature-dev</summary>
+<summary><strong>plan-converter</strong> - Convert plan.md to features.json and build features with /next-feature</summary>
 
 ### plan-converter
 
-Converts a project plan (plan.md) into a structured features.json file compatible with the feature-dev agent and `/next-feature` command.
+End-to-end feature development pipeline: convert a plan.md into a structured features.json, then implement features one-by-one with `/next-feature`.
 
 | Feature | Description |
 |---------|-------------|
-| Platform Detection | Auto-detects iOS/Android/Web from tech stack to generate appropriate validation criteria |
-| Phase-Based IDs | 100-based spacing (Phase 1: F100–F199) so new features can be inserted without renumbering |
-| Validation Criteria | Chrome, iOS Simulator, or Android Emulator verification steps per platform |
-| Skip Support | Marks optional/stretch-goal features as skippable |
-| Implementation Notes | Preserves architecture decisions, constraints, and context from the plan |
+| Plan Conversion | Parse plan.md into features.json with phases, IDs, validation criteria |
+| Platform Detection | Auto-detects iOS/Android/Web from tech stack for validation |
+| Phase-Based IDs | 100-based spacing (Phase 1: F100–F199) for easy insertion |
+| `/next-feature` | Auto-selects next pending feature, invokes feature-dev, validates, commits |
+| Progress Tracking | Completion percentage overall and by phase after each feature |
+| Feature Selection | Auto-select next or jump to specific ID (`/next-feature F102`) |
+
+**Skills:**
+- `plan-converter` — Convert plan.md to features.json
+
+**Commands:**
+- `/next-feature` — Implement the next feature (or `/next-feature F102` for a specific one)
 
 **Quick Start:**
 ```
+# Convert your plan
 "Convert plan.md to features.json"
-"Generate features.json from my plan"
-"Turn my plan into features for feature-dev"
+
+# Implement features one by one
+/next-feature
+
+# Jump to a specific feature
+/next-feature F102
 ```
 
 See [schema reference](plan-converter-plugin/skills/plan-converter/references/schema.md) for the complete features.json structure.
