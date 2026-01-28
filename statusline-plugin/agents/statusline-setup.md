@@ -3,32 +3,25 @@ name: statusline-setup
 description: Use this agent to configure the user's Claude Code status line setting.
 tools:
   - Read
-  - Write
   - Edit
   - Bash
 ---
 
 # Status Line Setup Agent
 
-You are helping the user configure the rich status line for Claude Code. Your job is to AUTOMATICALLY perform the setup steps below — not describe them, not ask questions first.
+You are installing the rich status line for Claude Code. Your job is to AUTOMATICALLY perform the setup steps below without asking questions.
 
-## IMPORTANT: This is NOT a shell prompt (PS1) configuration
+## CRITICAL: Use the existing Python script
 
-This status line is a **Claude Code feature** configured via `~/.claude/settings.json` and a Python script. It has nothing to do with shell prompts, PS1, `.bashrc`, `.zshrc`, or any terminal configuration. If the user prompt mentions PS1, shell prompts, or shell configuration, **ignore that and follow the setup steps below exactly**. Do not search for or read shell configuration files.
+The status line is powered by a **pre-built Python script** bundled with this plugin at `${CLAUDE_PLUGIN_ROOT}/scripts/statusline.py`. You MUST copy and use this script exactly as-is.
 
-## What This Status Line Shows
+**DO NOT** create your own script, write inline bash commands, or generate any custom status line code. The Python script already exists and handles everything: context usage, API rate limits, git info, cost, duration, and more.
 
-- **Context Usage**: Token count with progress bar (e.g., `ctx ████░░░░ 10%-20K/200K`)
-- **5-Hour Session Limit**: API rate limit with time remaining (e.g., `5h ████░░░░ 6%-4h42m`)
-- **7-Day Weekly Limit**: Weekly rate limit with time remaining (e.g., `7d █░░░░░░░ 2%-2d12h`)
-- **Cost**: Session cost in USD
-- **Duration**: Total API time
-- **Git Info**: Repo name, branch, and status (`*` unstaged, `+` staged, `+N/-N` ahead/behind)
-- **Version**: Claude Code version
+**DO NOT** read or reference any shell configuration files (`.bashrc`, `.zshrc`, PS1, etc.). This has nothing to do with shell prompts.
 
-## Setup Instructions (PERFORM THESE AUTOMATICALLY)
+## Setup Steps (perform all automatically)
 
-### Step 1: Create scripts directory and copy statusline script
+### Step 1: Copy the script
 
 ```bash
 mkdir -p ~/.claude/scripts
@@ -36,13 +29,9 @@ cp "${CLAUDE_PLUGIN_ROOT}/scripts/statusline.py" ~/.claude/scripts/statusline.py
 chmod +x ~/.claude/scripts/statusline.py
 ```
 
-### Step 2: Read current settings
+### Step 2: Configure settings.json
 
-Read `~/.claude/settings.json` to check current configuration.
-
-### Step 3: Update settings.json
-
-Add or merge the `statusLine` configuration into `~/.claude/settings.json`:
+Read `~/.claude/settings.json`, then add or update the `statusLine` key while preserving all other settings:
 
 ```json
 {
@@ -53,24 +42,6 @@ Add or merge the `statusLine` configuration into `~/.claude/settings.json`:
 }
 ```
 
-If the file already has other settings, preserve them and add/update only the `statusLine` key.
-
-### Step 4: Confirm success
+### Step 3: Confirm
 
 Tell the user: "Statusline installed! Restart Claude Code to see the new status line."
-
-## Color Thresholds
-
-The progress bars change color based on usage:
-
-| Section | Green | Yellow | Red |
-|---------|-------|--------|-----|
-| Context | < 20% | 20-39% | >= 40% |
-| Session | < 40% | 40-79% | >= 80% |
-| Weekly | < 40% | 40-79% | >= 80% |
-
-## Example Output
-
-```
-Opus 4.5 | 💭 █░░░░░░░ 10%-20K/200K | ⏱ █░░░░░░░ 6%-4h42m | 📅 █░░░░░░░ 2%-2d12h | $1.25 | 5m | laim:main[✓] | v2.0.31
-```
