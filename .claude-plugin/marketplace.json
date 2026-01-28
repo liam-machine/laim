@@ -120,7 +120,7 @@
     {
       "name": "plan-converter",
       "source": "./plan-converter-plugin",
-      "description": "Convert plan.md to features.json and implement features with /next-feature — auto-selects, validates, commits, and reports progress",
+      "description": "Convert plan.md to features.json and scaffold a local /next-feature command for feature-by-feature development",
       "version": "1.0.0",
       "author": {
         "name": "Liam Wynne"
