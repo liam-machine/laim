@@ -69,7 +69,7 @@ laim/
 ├── plan-converter-plugin/
 │   └── skills/
 │       ├── plan-converter                    # Convert plan.md → features.json
-│       └── create-next-feature-skill-local   # Scaffold /next-feature locally
+│       └── create-next-feature-skill-local   # Scaffold /next-feature skill locally
 │
 ├── powerbi-local/
 │   └── skills/
@@ -447,27 +447,27 @@ See [configuration guide](ssh-pi/skills/ssh-pi/references/configuration.md) for 
 
 ### plan-converter
 
-End-to-end feature development pipeline: convert plan.md into features.json, then scaffold a `/next-feature` command in the project repo.
+End-to-end feature development pipeline: convert plan.md into features.json, then scaffold a `/next-feature` skill in the project repo.
 
 | Feature | Description |
 |---------|-------------|
 | Plan Conversion | Parse plan.md into features.json with phases, IDs, validation criteria |
 | Platform Detection | Auto-detects iOS/Android/Web from tech stack for validation |
 | Phase-Based IDs | 100-based spacing (Phase 1: F100–F199) for easy insertion |
-| Local Scaffolding | Creates `/next-feature` command in project's `.claude/commands/` |
+| Local Scaffolding | Creates `/next-feature` skill in project's `.claude/skills/` |
 | Progress Tracking | Completion percentage overall and by phase after each feature |
 
 **Skills:**
 - `plan-converter` — Convert plan.md to features.json
-- `create-next-feature-skill-local` — Scaffold `/next-feature` command in the project repo
+- `create-next-feature-skill-local` — Scaffold `/next-feature` skill in the project repo
 
 **Quick Start:**
 ```
 # 1. Convert your plan
 "Convert plan.md to features.json"
 
-# 2. Scaffold the /next-feature command locally
-"Create the next-feature command for this project"
+# 2. Scaffold the /next-feature skill locally
+"Create the next-feature skill for this project"
 
 # 3. Implement features one by one
 /next-feature
