@@ -59,7 +59,6 @@ Display progress — exclude `skip: true` features from totals:
 [Summary of what was built]
 
 Progress: [completed]/[total] ([%]%) — skipped: [count]
-[██████░░░░ 60%]
 
 By phase:
   [phase name]: [x]/[y] ([%]%)
