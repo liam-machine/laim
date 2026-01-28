@@ -31,13 +31,13 @@ Write this exact content to `.claude/skills/next-feature/SKILL.md`:
 ---
 name: next-feature
 description: >
-  Implement the next feature from features.json using the feature-dev skill.
+  Implement the next feature from features.json using Anthropic's feature-dev agent.
   Invoke with /next-feature or /next-feature F102 for a specific feature.
 ---
 
 Read `features.json`. If `$ARGUMENTS` has a feature ID, select it. Otherwise auto-select the first feature where `status` is `"pending"`, `skip` is not `true`, and all `{{DEPENDENCY_KEY}}` are `"completed"` (in ID order). If none eligible, show progress summary and stop.
 
-Display the selected feature (ID, name, phase, description, implementation_notes, validation_criteria), then invoke the feature-dev skill with the description, implementation_notes, and validation_criteria as context.
+Display the selected feature (ID, name, phase, description, implementation_notes, validation_criteria), then invoke Anthropic's built-in feature-dev agent to implement it — pass the description, implementation_notes, and validation_criteria as context.
 
 After implementation, validate each `validation_criteria` entry:
 - "Verify in Chrome:" → use claude-in-chrome browser tools
