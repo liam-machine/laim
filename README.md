@@ -71,6 +71,10 @@ laim/
 │       ├── plan-converter                    # Convert plan.md → features.json
 │       └── create-next-feature-skill-local   # Scaffold /next-feature skill locally
 │
+├── m365-sharepoint-plugin/
+│   └── skills/
+│       └── sharepoint/                       # SharePoint page editing
+│
 ├── powerbi-local/
 │   └── skills/
 │       ├── pbi-dev/                   # Power BI development (TMDL, PBIR, DAX)
@@ -90,6 +94,7 @@ laim/
 | **ssh-pi** | `ssh-pi` | Productivity |
 | **next-feature** | `/next-feature` *(command)* | Productivity |
 | **plan-converter** | `plan-converter`, `create-next-feature-skill-local` | Productivity |
+| **m365-sharepoint** | `sharepoint` | Productivity |
 | **statusline** | *(hooks only)* | Productivity |
 
 ## Skills
@@ -477,6 +482,46 @@ End-to-end feature development pipeline: convert plan.md into features.json, the
 ```
 
 See [schema reference](plan-converter-plugin/skills/plan-converter/references/schema.md) for the complete features.json structure.
+
+</details>
+
+<details>
+<summary><strong>m365-sharepoint</strong> - SharePoint page editing and content management</summary>
+
+### m365-sharepoint
+
+Read and edit SharePoint modern pages. Uses REST API for reading page structure and generates PnP PowerShell commands for editing operations.
+
+| Feature | Description |
+|---------|-------------|
+| List Pages | List all pages in a SharePoint site |
+| Read Content | Get page sections, web parts, and text content |
+| Edit Text | Generate PnP commands to update text web parts |
+| Add Sections | Generate PnP commands to add page sections |
+| Authentication | MSAL device code flow with PnP client ID |
+
+**Quick Start:**
+
+```bash
+# List pages in a site
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/sharepoint/scripts/sp_pages.py list "https://tenant.sharepoint.com/sites/MySite"
+
+# Get page sections and web parts (shows instance IDs for editing)
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/sharepoint/scripts/sp_pages.py sections "https://tenant.sharepoint.com/sites/MySite" "Home.aspx"
+
+# Generate PnP command to edit text
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/sharepoint/scripts/sp_pages.py edit-text \
+  "https://tenant.sharepoint.com/sites/MySite" \
+  "Home.aspx" \
+  "instance-id-here" \
+  "<p>New content</p>"
+```
+
+**Requirements:**
+- Python 3.9+ with `msal` and `requests`
+- PnP PowerShell for editing operations (`Install-Module PnP.PowerShell`)
+
+See [PnP commands reference](m365-sharepoint-plugin/skills/sharepoint/references/pnp-commands.md) for complete PowerShell documentation.
 
 </details>
 

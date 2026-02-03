@@ -1,0 +1,10 @@
+{
+  "name": "m365-sharepoint",
+  "version": "1.0.0",
+  "description": "SharePoint page editing and content management via REST API and PnP PowerShell",
+  "author": {
+    "name": "Liam Wynne"
+  },
+  "license": "MIT",
+  "keywords": ["sharepoint", "m365", "microsoft", "pages", "content", "pnp"]
+}
