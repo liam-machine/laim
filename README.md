@@ -71,6 +71,9 @@ laim/
 │       ├── plan-converter                    # Convert plan.md → features.json
 │       └── create-next-feature-skill-local   # Scaffold /next-feature skill locally
 │
+├── atlassian-api-plugin/
+│   └── skills/atlassian-api/                 # Jira & Confluence REST API client
+│
 ├── m365-sharepoint-plugin/
 │   └── skills/
 │       └── sharepoint/                       # SharePoint page editing
@@ -86,6 +89,7 @@ laim/
 
 | Plugin | Skills | Category |
 |--------|--------|----------|
+| **atlassian-api** | `atlassian-api` | Productivity |
 | **databricks** | `databricks` + 13 commands | Data Engineering |
 | **powerbi-local** | `pbi-dev`, `pbi-test` | Data Engineering |
 | **people** | `messaging`, `github-collaborator` | Productivity |
@@ -100,6 +104,71 @@ laim/
 ## Skills
 
 Skills are auto-triggered based on context — Claude automatically uses them when relevant.
+
+<details>
+<summary><strong>atlassian-api</strong> - Jira & Confluence REST API client</summary>
+
+### atlassian-api
+
+Thin Python CLI that wraps the Atlassian Cloud REST API with automatic authentication, JSON formatting, and pagination. Covers full Jira v3 + Confluence v2 with bonus support for attachments, sprints/boards, labels, and bulk operations.
+
+| Feature | Description |
+|---------|-------------|
+| Jira | JQL search, issue CRUD, transitions, comments, worklogs, links |
+| Confluence | CQL search, page CRUD, comments, spaces, children/descendants |
+| Agile | Boards, sprints, backlog (not available via MCP) |
+| Attachments | File upload to issues and pages (not available via MCP) |
+| Labels | Page label management (not available via MCP) |
+| Auth | Basic auth via `~/.atlassian-credentials` |
+
+**Setup — API Token:**
+
+1. Go to [https://id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
+2. Click **Create API token**, give it a name (e.g. "Claude Code"), and copy the token
+3. Create `~/.atlassian-credentials` with your details:
+
+```
+email=you@company.com
+token=YOUR_API_TOKEN_HERE
+site=yourcompany.atlassian.net
+```
+
+4. Secure the file:
+```bash
+chmod 600 ~/.atlassian-credentials
+```
+
+**Quick Start:**
+
+```bash
+# Test connection
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/atlassian-api/scripts/atlassian.py GET /rest/api/3/myself
+
+# Search Jira issues
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/atlassian-api/scripts/atlassian.py POST /rest/api/3/search/jql \
+  --data '{"jql":"project = PROJ ORDER BY created DESC","maxResults":10,"fields":["summary","status"]}'
+
+# Search Confluence pages
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/atlassian-api/scripts/atlassian.py GET /wiki/rest/api/search \
+  --params cql='type=page AND text~"deploy"' limit=10
+
+# Get a Confluence page with content
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/atlassian-api/scripts/atlassian.py GET /wiki/api/v2/pages/123456 \
+  --params body-format=storage
+
+# Auto-paginate through all results
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/atlassian-api/scripts/atlassian.py GET /wiki/api/v2/spaces \
+  --paginate --max-pages 10
+```
+
+**CLI Syntax:**
+```
+python3 atlassian.py METHOD PATH [--data JSON] [--params KEY=VAL ...] [--paginate] [--max-pages N] [--raw]
+```
+
+The script uses only Python stdlib (no pip install needed). See [Jira endpoints](atlassian-api-plugin/skills/atlassian-api/references/jira-endpoints.md) and [Confluence endpoints](atlassian-api-plugin/skills/atlassian-api/references/confluence-endpoints.md) for full API reference.
+
+</details>
 
 <details>
 <summary><strong>databricks</strong> - Comprehensive Databricks administration</summary>
