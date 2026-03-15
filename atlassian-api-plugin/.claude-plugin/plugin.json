@@ -1,0 +1,11 @@
+{
+  "name": "atlassian-api",
+  "version": "1.0.0",
+  "description": "Jira and Confluence REST API client - JQL/CQL search, issue and page CRUD, transitions, comments, sprints, attachments, and labels via lightweight Python CLI",
+  "author": {
+    "name": "Liam Wynne"
+  },
+  "repository": "https://github.com/liam-machine/laim",
+  "license": "MIT",
+  "keywords": ["atlassian", "jira", "confluence", "rest-api", "jql", "cql", "tickets", "wiki", "sprints", "agile"]
+}
