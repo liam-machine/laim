@@ -140,6 +140,18 @@
       "license": "MIT",
       "keywords": ["sharepoint", "m365", "microsoft", "pages", "content", "pnp", "office365"],
       "category": "productivity"
+    },
+    {
+      "name": "atlassian-api",
+      "source": "./atlassian-api-plugin",
+      "description": "Jira and Confluence REST API client - JQL/CQL search, issue and page CRUD, transitions, comments, sprints, attachments, and labels via lightweight Python CLI",
+      "version": "1.0.0",
+      "author": {
+        "name": "Liam Wynne"
+      },
+      "license": "MIT",
+      "keywords": ["atlassian", "jira", "confluence", "rest-api", "jql", "cql", "tickets", "wiki", "sprints", "agile"],
+      "category": "productivity"
     }
   ]
 }
